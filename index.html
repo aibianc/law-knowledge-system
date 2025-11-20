@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>公安专业知识点学习系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', 'PingFang SC', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 导航栏 */
+        .navbar {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            animation: slideDown 0.5s ease;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .navbar-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo::before {
+            content: '📚';
+            font-size: 28px;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-input {
+            padding: 10px 40px 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 14px;
+            width: 280px;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            width: 320px;
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            color: #999;
+            pointer-events: none;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        /* 主布局 */
+        .main-layout {
+            display: flex;
+            flex: 1;
+            max-width: 1600px;
+            margin: 0 auto;
+            width: 100%;
+            gap: 0;
+        }
+
+        /* 侧边导航 */
+        .side-nav {
+            width: 280px;
+            background: white;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+            transition: transform 0.3s;
+        }
+
+        .side-nav-header {
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .side-nav-header h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .side-nav-content {
+            padding: 15px;
+        }
+
+        .nav-chapter {
+            margin-bottom: 15px;
+        }
+
+        .nav-chapter-title {
+            padding: 12px 15px;
+            background: linear-gradient(135deg, var(--color-from), var(--color-to));
+            color: white;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            margin-bottom: 8px;
+        }
+
+        .nav-chapter-title:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .nav-section-list {
+            display: none;
+            padding-left: 10px;
+        }
+
+        .nav-section-list.active {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        .nav-section-item {
+            padding: 8px 15px;
+            margin: 4px 0;
+            background: #f8f9fa;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            color: #555;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-section-item:hover {
+            background: #e9ecef;
+            border-left-color: var(--color-accent);
+            transform: translateX(3px);
+            color: #333;
+        }
+
+        .nav-section-item.active {
+            background: linear-gradient(135deg, var(--color-from), var(--color-to));
+            color: white;
+            font-weight: 600;
+            border-left-color: transparent;
+        }
+
+        .nav-toggle {
+            display: none;
+            position: fixed;
+            left: 20px;
+            bottom: 80px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            z-index: 999;
+            font-size: 20px;
+            transition: all 0.3s;
+        }
+
+        .nav-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        /* 主容器 */
+        .container {
+            flex: 1;
+            padding: 30px 20px;
+            overflow-y: auto;
+            max-width: 1400px;
+        }
+
+        /* 快速导航卡片 */
+        .quick-nav {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            animation: fadeInUp 0.6s ease;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .quick-nav-title {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .quick-nav-title::before {
+            content: '🎯';
+            font-size: 24px;
+        }
+
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+        }
+
+        .nav-card {
+            background: linear-gradient(135deg, var(--color-from) 0%, var(--color-to) 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .nav-card:hover::before {
+            opacity: 1;
+        }
+
+        .nav-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        }
+
+        .nav-card-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .nav-card-desc {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        /* 内容区域 */
+        .content-wrapper {
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .chapter-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+        }
+
+        .chapter-card:hover {
+            box-shadow: 0 15px 50px rgba(0,0,0,0.12);
+            transform: translateY(-3px);
+        }
+
+        .chapter-header {
+            border-bottom: 3px solid;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .chapter-icon {
+            font-size: 32px;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 15px;
+            background: linear-gradient(135deg, var(--color-from) 0%, var(--color-to) 100%);
+        }
+
+        .chapter-title {
+            font-size: 26px;
+            font-weight: bold;
+            flex: 1;
+        }
+
+        .section-block {
+            margin-bottom: 20px;
+            border-left: 4px solid;
+            padding-left: 20px;
+            transition: all 0.3s;
+        }
+
+        .section-block:hover {
+            border-left-width: 6px;
+        }
+
+        .section-header {
+            cursor: pointer;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+            user-select: none;
+        }
+
+        .section-header:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .toggle-icon {
+            font-size: 20px;
+            color: #666;
+            transition: transform 0.3s;
+        }
+
+        .toggle-icon.active {
+            transform: rotate(180deg);
+        }
+
+        .section-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+            padding: 0 15px;
+        }
+
+        .section-content.active {
+            max-height: 5000px;
+            padding: 20px 15px;
+        }
+
+        .point-card {
+            background: linear-gradient(to right, #f8f9fa, #ffffff);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            border-left: 4px solid;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+        }
+
+        .point-card:hover {
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transform: translateX(3px);
+        }
+
+        .point-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .point-content {
+            line-height: 1.8;
+            color: #555;
+        }
+
+        .point-content ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .point-content li {
+            padding: 8px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .point-content li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        /* 滚动到顶部按钮 */
+        .scroll-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            transition: all 0.3s;
+            z-index: 999;
+        }
+
+        .scroll-top:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .scroll-top.show {
+            display: flex;
+        }
+
+        /* 进度条 */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.1s;
+            z-index: 1001;
+        }
+
+        /* 侧边导航滚动条 */
+        .side-nav::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .side-nav::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .side-nav::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 3px;
+        }
+
+        .side-nav::-webkit-scrollbar-thumb:hover {
+            background: #764ba2;
+        }
+
+        /* 响应式 */
+        @media (max-width: 1200px) {
+            .side-nav {
+                width: 240px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .side-nav {
+                position: fixed;
+                left: 0;
+                transform: translateX(-100%);
+                z-index: 1000;
+            }
+            
+            .side-nav.active {
+                transform: translateX(0);
+            }
+
+            .nav-toggle {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .search-input {
+                width: 200px;
+            }
+            .search-input:focus {
+                width: 220px;
+            }
+            .nav-grid {
+                grid-template-columns: 1fr;
+            }
+            .chapter-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 24px;
+            }
+            .chapter-title {
+                font-size: 22px;
+            }
+
+            .main-layout {
+                flex-direction: column;
+            }
+
+            .container {
+                padding: 20px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 进度条 -->
+    <div class="progress-bar" id="progressBar"></div>
+
+    <!-- 导航栏 -->
+    <nav class="navbar" id="navbar">
+        <div class="navbar-container">
+            <div class="logo">公安专业知识学习系统</div>
+            <div class="nav-actions">
+                <div class="search-box">
+                    <input type="text" class="search-input" id="searchInput" placeholder="搜索知识点..." oninput="search(this.value)">
+                    <span class="search-icon">🔍</span>
+                </div>
+                <button class="btn btn-primary" onclick="toggleAll()">
+                    <span>📖</span>
+                    <span>展开/收起</span>
+                </button>
+                <button class="btn btn-secondary" onclick="window.location.href='法律知识体系完整版.html'">
+                    <span>⚖️</span>
+                    <span>法律知识</span>
+                </button>
+                <button class="btn btn-secondary" onclick="window.location.href='home.html'">
+                    <span>🏠</span>
+                    <span>主页</span>
+                </button>
+                <button class="btn btn-secondary" onclick="window.print()">
+                    <span>🖨️</span>
+                    <span>打印</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主布局 -->
+    <div class="main-layout">
+        <!-- 侧边导航 -->
+        <aside class="side-nav" id="sideNav">
+            <div class="side-nav-header">
+                <h3>📑 目录导航</h3>
+                <p style="font-size: 12px; opacity: 0.9;">点击快速跳转</p>
+            </div>
+            <div class="side-nav-content" id="sideNavContent">
+                <!-- 动态生成 -->
+            </div>
+        </aside>
+
+        <!-- 主容器 -->
+        <div class="container">
+        <!-- 快速导航 -->
+        <div class="quick-nav">
+            <div class="quick-nav-title">快速导航</div>
+            <div class="nav-grid">
+                <a class="nav-card" href="#ch1" style="--color-from: #4facfe; --color-to: #00f2fe;">
+                    <div class="nav-card-title">第一章</div>
+                    <div class="nav-card-desc">实务工作能力</div>
+                </a>
+                <a class="nav-card" href="#ch2" style="--color-from: #43e97b; --color-to: #38f9d7;">
+                    <div class="nav-card-title">第二章</div>
+                    <div class="nav-card-desc">群众工作能力</div>
+                </a>
+                <a class="nav-card" href="#ch3" style="--color-from: #fa709a; --color-to: #fee140;">
+                    <div class="nav-card-title">第三章</div>
+                    <div class="nav-card-desc">行政管理能力</div>
+                </a>
+                <a class="nav-card" href="#ch4" style="--color-from: #a18cd1; --color-to: #fbc2eb;">
+                    <div class="nav-card-title">第四章</div>
+                    <div class="nav-card-desc">信息工作能力</div>
+                </a>
+                <a class="nav-card" href="#ch5" style="--color-from: #ff6a88; --color-to: #ff99ac;">
+                    <div class="nav-card-title">第五章</div>
+                    <div class="nav-card-desc">应急处理能力</div>
+                </a>
+            </div>
+        </div>
+
+            <!-- 内容区域 -->
+            <div class="content-wrapper" id="content"></div>
+        </div>
+    </div>
+
+    <!-- 移动端侧边导航切换按钮 -->
+    <button class="nav-toggle" id="navToggle" onclick="toggleSideNav()">☰</button>
+
+    <!-- 滚动到顶部按钮 -->
+    <button class="scroll-top" id="scrollTop" onclick="scrollToTop()">↑</button>
+
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

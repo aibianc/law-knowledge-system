@@ -1,0 +1,2676 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>法律知识体系完整版</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background: #f5f5f5;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 40px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .header-content {
+            flex: 1;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .header-nav {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .main-content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 320px;
+            background: white;
+            border-right: 2px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .search-area {
+            padding: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .menu-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+        }
+
+        .law-module {
+            margin-bottom: 15px;
+        }
+
+        .module-title {
+            padding: 12px 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+            user-select: none;
+        }
+
+        .module-title:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .module-title .icon {
+            transition: transform 0.3s;
+        }
+
+        .module-title.active .icon {
+            transform: rotate(90deg);
+        }
+
+        .chapter-list {
+            display: none;
+            padding: 10px 0 10px 15px;
+            background: #f8f9fa;
+            border-radius: 0 0 8px 8px;
+            margin-top: -8px;
+        }
+
+        .chapter-list.show {
+            display: block;
+        }
+
+        .chapter-item {
+            padding: 8px 12px;
+            margin: 5px 0;
+            background: white;
+            border-left: 3px solid #667eea;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .chapter-item:hover {
+            background: #e9ecef;
+            transform: translateX(3px);
+            border-left-width: 5px;
+        }
+
+        .chapter-item.active {
+            background: #667eea;
+            color: white;
+            font-weight: bold;
+        }
+
+        .chapter-item .related-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            background: #ffc107;
+            color: #333;
+            border-radius: 10px;
+            font-size: 11px;
+            margin-left: 8px;
+        }
+
+        .content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: white;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e0e0e0;
+            padding: 10px 20px 0;
+        }
+
+        .tab-btn {
+            padding: 10px 25px;
+            background: transparent;
+            border: none;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+            color: #666;
+            transition: all 0.3s;
+            margin-right: 5px;
+        }
+
+        .tab-btn:hover {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+        }
+
+        .tab-btn.active {
+            background: white;
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .view-area {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: white;
+        }
+
+        .knowledge-detail {
+            display: none;
+        }
+
+        .knowledge-detail.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .detail-header {
+            background: linear-gradient(135deg, #667eea22 0%, #764ba233 100%);
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border-left: 5px solid #667eea;
+        }
+
+        .detail-header h2 {
+            color: #667eea;
+            font-size: 26px;
+            margin-bottom: 10px;
+        }
+
+        .detail-header .breadcrumb {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .content-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: #667eea;
+            margin-right: 10px;
+        }
+
+        .content-box {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .content-box ul {
+            padding-left: 25px;
+        }
+
+        .content-box li {
+            margin: 8px 0;
+        }
+
+        .comparison-section {
+            background: linear-gradient(to right, #fff9e6, #ffe6f0);
+            padding: 25px;
+            border-radius: 12px;
+            margin-top: 30px;
+            border: 2px dashed #ffc107;
+        }
+
+        .comparison-title {
+            font-size: 22px;
+            color: #f57c00;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .comparison-title::before {
+            content: '🔗';
+            margin-right: 10px;
+            font-size: 24px;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .comparison-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .comparison-card h4 {
+            font-size: 16px;
+            margin-bottom: 12px;
+            color: #333;
+        }
+
+        .comparison-card p {
+            line-height: 1.7;
+            color: #555;
+            font-size: 14px;
+        }
+
+        .card-constitutional { border-left-color: #1976d2; }
+        .card-police { border-left-color: #7b1fa2; }
+        .card-criminal { border-left-color: #c2185b; }
+        .card-civil { border-left-color: #388e3c; }
+        .card-admin { border-left-color: #f57c00; }
+        .card-security { border-left-color: #512da8; }
+        .card-traffic { border-left-color: #00796b; }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #667eea22 0%, #764ba233 100%);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .highlight-box strong {
+            color: #667eea;
+            font-size: 16px;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 500;
+            margin: 3px;
+        }
+
+        .tag-same { background: #c8e6c9; color: #2e7d32; }
+        .tag-diff { background: #ffccbc; color: #d84315; }
+        .tag-important { background: #fff9c4; color: #f57f17; }
+
+        .chart-container {
+            width: 100%;
+            height: 600px;
+            display: none;
+        }
+
+        .chart-container.active {
+            display: block;
+        }
+
+        .welcome-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #999;
+        }
+
+        .welcome-screen .icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        .welcome-screen h3 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .welcome-screen p {
+            font-size: 16px;
+        }
+
+        .quick-nav {
+            position: fixed;
+            right: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+
+        .quick-nav-title {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .quick-nav-item {
+            padding: 8px 12px;
+            margin: 5px 0;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+        }
+
+        .quick-nav-item:hover {
+            background: #f0f0f0;
+            border-left-color: #667eea;
+            transform: translateX(-3px);
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #764ba2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <h1>🎓 法律知识体系完整版</h1>
+                <div class="subtitle">基于9大法律模块的完整知识点体系 | 支持横向对比与知识延伸</div>
+            </div>
+            <div class="header-nav">
+                <a href="index.html" class="nav-btn">
+                    <span>👮</span>
+                    <span>公安知识</span>
+                </a>
+                <a href="home.html" class="nav-btn">
+                    <span>🏠</span>
+                    <span>主页</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="sidebar">
+                <div class="search-area">
+                    <input type="text" class="search-input" placeholder="🔍 搜索知识点..." oninput="searchKnowledge(this.value)">
+                </div>
+                <div class="menu-area" id="menuArea"></div>
+            </div>
+
+            <div class="content-area">
+                <div class="tabs">
+                    <button class="tab-btn active" onclick="switchTab('detail')">📖 详细内容</button>
+                    <button class="tab-btn" onclick="switchTab('tree')">🌲 树状图</button>
+                    <button class="tab-btn" onclick="switchTab('mindmap')">🧠 思维导图</button>
+                </div>
+
+                <div class="view-area">
+                    <!-- 详细内容视图 -->
+                    <div id="detailView" class="knowledge-detail active">
+                        <div class="welcome-screen">
+                            <div class="icon">📚</div>
+                            <h3>欢迎使用法律知识体系</h3>
+                            <p>请从左侧菜单选择要学习的知识点</p>
+                        </div>
+                    </div>
+
+                    <!-- 树状图视图 -->
+                    <div id="treeChart" class="chart-container"></div>
+
+                    <!-- 思维导图视图 -->
+                    <div id="mindmapChart" class="chart-container"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="quick-nav">
+        <div class="quick-nav-title">快速导航</div>
+        <div class="quick-nav-item" onclick="scrollToSection('基本内容')">基本内容</div>
+        <div class="quick-nav-item" onclick="scrollToSection('横向对比')">横向对比</div>
+        <div class="quick-nav-item" onclick="scrollToSection('相关延伸')">相关延伸</div>
+    </div>
+
+    <script>
+        // 完整的知识体系数据
+        const knowledgeSystem = {
+            "法理学与宪法学": {
+                color: "#1976d2",
+                chapters: {
+                    "法的作用": {
+                        content: {
+                            "规范作用（5种）": [
+                                "①指引作用：指引本人行为，作用对象是自己",
+                                "②评价作用：判断他人行为是否合法，作用对象是他人",
+                                "③教育作用：对人们今后行为的诱导影响",
+                                "④预测作用：预测人们相互行为及法律后果，作用对象是人们之间的行为",
+                                "⑤强制作用：制裁违法犯罪行为，是其他作用的保证，作用对象是违法犯罪者"
+                            ],
+                            "社会作用（2种）": [
+                                "①维护统治阶级的统治（本质作用）",
+                                "②维护社会秩序和社会稳定"
+                            ],
+                            "关系": [
+                                "规范作用是手段，社会作用是目的"
+                            ]
+                        },
+                        related: ["执法", "司法", "守法"]
+                    },
+                    "法的运行": {
+                        content: {
+                            "法的制定（立法）": [
+                                "国家机关依照法定程序和法定职权，制定、修改、废止法律和其他规范性法律文件及认可法律的活动"
+                            ],
+                            "法的遵守（守法）": [
+                                "主体：国家机关、社会组织和公民个人（具有广泛性）",
+                                "内容：依照法的规定，行使权力（权利）和履行义务（职责）",
+                                "包括消极被动的守法（不违法）",
+                                "也包括根据授权性法律规范积极主动地行使权利、实施法律"
+                            ],
+                            "法的执行（执法）": [
+                                "广义：一切执行法律、适用法律的活动",
+                                "狭义：国家行政机关和法律法规规章授权的组织及其公职人员在行使行政管理权的过程中贯彻实施法律的活动",
+                                "特征：国家权威性、国家强制性、主动性和单方面性"
+                            ],
+                            "法的适用（司法）": [
+                                "国家司法机关依照法定职权和程序，将法运用于具体案件的专门活动"
+                            ]
+                        },
+                        related: ["行政行为", "司法程序"]
+                    },
+                    "法律责任": {
+                        content: {
+                            "概念": [
+                                "法律责任是指由违法行为、违约行为或者由于法律规定而应承受的某种不利的法律后果"
+                            ],
+                            "引起法律责任的原因（3种）": [
+                                "①违法：包括民事违法、行政违法、犯罪等",
+                                "②违约：违约也是一种特殊形式的违法，也应承担相应法律责任",
+                                "③法律直接规定：如严格责任及无过错责任"
+                            ],
+                            "法律责任的特点（2点）": [
+                                "①承担法律责任的最终依据是法律，而不是其他规范",
+                                "②法律责任具有国家强制性，因此区别于民间或社团的道德责任、纪律责任"
+                            ],
+                            "法律责任的免除": [
+                                "虽然违法者违反了法律，但由于出现法定条件而被部分或全部地免除法律责任",
+                                "法定条件主要包括：时效免责、不诉免责、自愿协议免责、自首立功免责、因履行不能而免责等"
+                            ],
+                            "法律制裁": [
+                                "由特定国家机关对违法者依其法律责任而实施的强制性的惩罚措施",
+                                "法律制裁类型包括：刑事制裁、民事制裁、行政制裁、违宪制裁",
+                                "有法律制裁一定有法律责任；有法律责任不一定有法律制裁（存在免责情况）"
+                            ]
+                        },
+                        related: ["刑事责任", "行政责任", "民事责任"]
+                    },
+                    "依法治国": {
+                        content: {
+                            "社会主义法治理念（5项）": [
+                                "依法治国：社会主义法治的核心内容",
+                                "执法为民：社会主义法治的本质要求",
+                                "公平正义：社会主义法治的价值追求",
+                                "服务大局：社会主义法治的重要使命",
+                                "党的领导：社会主义法治的根本保证"
+                            ],
+                            "中国特色社会主义法治道路基本内涵": [
+                                "制度基础：中国特色社会主义制度",
+                                "领导核心：中国共产党",
+                                "指导思想：马克思列宁主义、毛泽东思想、邓小平理论、三个代表重要思想、科学发展观、习近平新时代中国特色社会主义思想",
+                                "总目标：建设中国特色社会主义法治体系，建设社会主义法治国家",
+                                "总要求：坚持党的领导、人民当家作主、依法治国有机统一"
+                            ],
+                            "五个必须": [
+                                "必须坚持党的领导",
+                                "必须坚持人民主体地位",
+                                "必须坚持法律面前人人平等",
+                                "必须坚持依法治国和以德治国相结合",
+                                "必须坚持从中国实际出发"
+                            ],
+                            "总布局": [
+                                "坚持依法治国、依法执政、依法行政共同推进",
+                                "坚持法治国家、法治政府、法治社会一体建设"
+                            ],
+                            "总方向": [
+                                "实现科学立法、严格执法、公正司法、全民守法的法治工作基本格局",
+                                "促进国家治理体系和治理能力现代化"
+                            ]
+                        },
+                        related: ["党的领导", "人民当家作主"]
+                    },
+                    "宪法概述": {
+                        content: {
+                            "宪法的概念": [
+                                "宪法是规定国家的根本制度和根本任务",
+                                "集中体现各种政治力量对比关系",
+                                "保障公民基本权利的国家根本法"
+                            ],
+                            "宪法的特征（3点）": [
+                                "①宪法是国家的根本法",
+                                "②宪法是公民权利的保障书",
+                                "③宪法是民主事实法律化的基本形式"
+                            ],
+                            "宪法的基本原则（4项）": [
+                                "人民主权原则",
+                                "基本人权原则",
+                                "权力制约原则",
+                                "法治原则"
+                            ],
+                            "宪法的历史": [
+                                "新中国先后颁布了一个宪法性文件和四部宪法：",
+                                "《中国人民政治协商会议共同纲领》、1954年宪法、1975年宪法、1978年宪法、1982年宪法",
+                                "现行宪法是1982年宪法",
+                                "分别于1988年、1993年、1999年、2004年、2018年进行过5次修改"
+                            ],
+                            "宪法修改": [
+                                "由全国人民代表大会常务委员会或者五分之一以上的全国人民代表大会代表提议",
+                                "并由全国人民代表大会以全体代表的三分之二以上的多数通过"
+                            ]
+                        },
+                        related: ["根本法", "宪法修正案"]
+                    },
+                    "国家制度": {
+                        content: {
+                            "根本制度": ["社会主义制度"],
+                            "国体": ["人民民主专政"],
+                            "政体": ["人民代表大会制度"],
+                            "基本政治制度": ["中国共产党领导的多党合作和政治协商制度", "民族区域自治制度", "基层群众自治制度"],
+                            "选举制度": [
+                                "直接选举：县乡两级人大代表",
+                                "间接选举：全国、省、设区的市人大代表",
+                                "双过半制：选民或代表过半数参加，候选人获得过半数选票当选"
+                            ]
+                        },
+                        related: ["人民代表大会", "政治制度"]
+                    },
+                    "公民的基本权利与义务": {
+                        content: {
+                            "平等权": [
+                                "中华人民共和国公民在法律面前一律平等"
+                            ],
+                            "政治权利和自由": [
+                                "选举权和被选举权",
+                                "言论、出版、集会、结社、游行、示威的自由"
+                            ],
+                            "人身权利": [
+                                "人身自由不受侵犯",
+                                "人格尊严不受侵犯",
+                                "住宅不受侵犯",
+                                "通信自由和通信秘密受法律保护"
+                            ],
+                            "社会经济权利": [
+                                "财产权",
+                                "劳动权",
+                                "劳动者的休息权",
+                                "获得物质帮助权（年老、疾病或丧失劳动能力时）"
+                            ],
+                            "文化教育权利": [
+                                "受教育权",
+                                "进行科学研究、文学艺术创作和其他文化活动的自由"
+                            ],
+                            "公民的基本义务（6项）": [
+                                "①维护国家统一和全国各民族团结",
+                                "②遵守宪法和法律，保守国家秘密，爱护公共财产，遵守劳动纪律，遵守公共秩序，尊重社会公德",
+                                "③维护祖国的安全、荣誉和利益",
+                                "④保卫祖国、依法服兵役和参加民兵组织",
+                                "⑤依法纳税",
+                                "⑥夫妻双方实行计划生育，父母抚养教育未成年子女，成年子女赡养扶助父母"
+                            ]
+                        },
+                        related: ["民事权利", "刑事责任年龄"]
+                    },
+                    "国家机构": {
+                        content: {
+                            "全国人民代表大会": [
+                                "性质和地位：最高国家权力机关和最高国家立法机关",
+                                "组成：由省、自治区、直辖市、特别行政区和军队选出的代表组成",
+                                "任期：每届任期5年",
+                                "会议制度：每年举行一次，由全国人大常委会召集",
+                                "主要职权：修改宪法、监督宪法实施、制定和修改基本法律、选举国家主席副主席等"
+                            ],
+                            "全国人大常委会": [
+                                "性质：全国人大的常设机关，在全国人大闭会期间行使国家最高权力",
+                                "组成：委员长、副委员长、秘书长、委员",
+                                "任期：同全国人大每届任期相同",
+                                "委员长、副委员长连续任职不得超过两届",
+                                "主要职权：解释宪法、制定和修改除基本法律以外的其他法律、监督国务院等工作、决定特赦等"
+                            ],
+                            "国家主席": [
+                                "性质：国家机构的重要组成部分，是一个独立的国家机关，是我国的国家元首",
+                                "选举：由全国人大选举，有选举权和被选举权的年满45周岁的公民可以被选为国家主席、副主席",
+                                "任期：同全国人大每届任期相同",
+                                "主要职权：公布法律、发布特赦令和紧急状态、任免国务院组成人员和驻外全权代表、代表国家进行国事活动、授予国家勋章和荣誉称号"
+                            ],
+                            "国务院": [
+                                "性质：中央人民政府，是最高国家权力机关的执行机关，是最高国家行政机关",
+                                "组成：总理、副总理、国务委员、各部部长、各委员会主任、审计长、秘书长",
+                                "领导体制：总理负责制。各部实行部长负责制、各委员会实行主任负责制",
+                                "总理、副总理、国务委员连续任职不得超过两届",
+                                "主要职权：规定行政措施、制定行政法规、领导各部委和地方行政机关工作、批准省级区域划分、决定部分地区进入紧急状态等"
+                            ],
+                            "中央军事委员会": [
+                                "领导全国武装力量",
+                                "组成：主席、副主席、委员",
+                                "任期：每届任期5年，同全国人大每届任期相同",
+                                "领导体制：主席负责制",
+                                "中央军委主席对全国人大及其常委会负责"
+                            ],
+                            "监察委员会": [
+                                "定位：国家的监察机关",
+                                "机构设置：国家监察委员会是最高监察机关，领导地方各级监察委员会工作",
+                                "组成：主任、副主任、委员",
+                                "国家监察委员会主任连续任职不得超过两届",
+                                "职权行使原则：依法独立行使监察权，不受行政机关、社会团体和个人的干涉"
+                            ],
+                            "人民法院": [
+                                "性质：国家的审判机关",
+                                "独立行使审判权，不受行政机关、社会团体和个人的干涉",
+                                "上级法院监督下级法院的工作",
+                                "最高人民法院院长任期同全国人大任期相同，连续任职不得超过两届"
+                            ],
+                            "人民检察院": [
+                                "性质：国家法律监督机关",
+                                "依法独立行使检察权，不受行政机关、社会团体和个人的干涉",
+                                "上级检察院领导下级检察院的工作",
+                                "最高人民检察院检察长任期同全国人大任期相同，连续任职不得超过两届"
+                            ]
+                        },
+                        related: ["国家权力机关", "行政机关", "司法机关"]
+                    }
+                }
+            },
+            "人民警察法": {
+                color: "#7b1fa2",
+                chapters: {
+                    "人民警察": {
+                        content: {
+                            "人民警察包括": [
+                                "公安机关人民警察",
+                                "国家安全机关人民警察",
+                                "监狱的人民警察",
+                                "人民法院、人民检察院的司法警察"
+                            ],
+                            "任职条件（6项）": [
+                                "①年满18周岁的公民",
+                                "②拥护中华人民共和国宪法",
+                                "③有良好的政治、业务素质和良好的品行",
+                                "④身体健康",
+                                "⑤具有高中毕业以上文化程度",
+                                "⑥自愿从事人民警察工作"
+                            ],
+                            "领导职务人员条件（4项）": [
+                                "①具有法律专业知识",
+                                "②具有政法工作经验和一定的组织管理、指挥能力",
+                                "③具有大学专科以上学历",
+                                "④经人民警察院校培训，考试合格"
+                            ],
+                            "不得录用情形": [
+                                "曾因犯罪受过刑事处罚的",
+                                "曾被开除公职的"
+                            ]
+                        },
+                        related: ["公务员法", "招录条件"]
+                    },
+                    "禁止行为（12项）": {
+                        content: {
+                            "第一项": [
+                                "散布有损国家声誉的言论",
+                                "参加非法组织",
+                                "参加旨在反对国家的集会、游行、示威等活动",
+                                "参加罢工"
+                            ],
+                            "第二项": [
+                                "泄露国家秘密",
+                                "泄露警务工作秘密"
+                            ],
+                            "第三项": [
+                                "弄虚作假，隐瞒案情",
+                                "包庇、纵容违法犯罪活动"
+                            ],
+                            "第四项": [
+                                "刑讯逼供",
+                                "体罚、虐待人犯"
+                            ],
+                            "第五项": [
+                                "非法剥夺、限制他人人身自由",
+                                "非法搜查他人的身体、物品、住所或者场所"
+                            ],
+                            "第六项": [
+                                "敲诈勒索",
+                                "索取、收受贿赂"
+                            ],
+                            "第七项": [
+                                "殴打他人",
+                                "唆使他人打人"
+                            ],
+                            "第八项": [
+                                "违法实施处罚",
+                                "违法收取费用"
+                            ],
+                            "第九项": [
+                                "接受当事人及其代理人的请客送礼"
+                            ],
+                            "第十项": [
+                                "从事营利性的经营活动",
+                                "受雇于任何个人或者组织"
+                            ],
+                            "第十一项": [
+                                "玩忽职守",
+                                "不履行法定义务"
+                            ],
+                            "第十二项": [
+                                "其他违法乱纪的行为"
+                            ],
+                            "法律责任": [
+                                "有上述行为之一的，应当给予行政处分",
+                                "构成犯罪的，依法追究刑事责任"
+                            ]
+                        },
+                        related: ["非法证据排除", "刑讯逼供", "渎职犯罪"]
+                    },
+                    "警务保障": {
+                        content: {
+                            "执行上级决定和命令原则": [
+                                "人民警察必须执行上级的决定和命令"
+                            ],
+                            "认为决定和命令有错误时": [
+                                "可以按照规定提出意见",
+                                "但不得中止或者改变决定和命令的执行",
+                                "提出的意见不被采纳时，必须服从决定和命令",
+                                "执行决定和命令的后果由作出决定和命令的上级负责"
+                            ],
+                            "拒绝执行的情形": [
+                                "对超越法律、法规规定的人民警察职责范围的指令，有权拒绝执行",
+                                "并同时向上级机关报告"
+                            ],
+                            "群众的支持": [
+                                "人民警察依法执行职务，公民和组织应当给予支持和协助",
+                                "对协助人民警察执行职务有显著成绩的，给予表彰和奖励",
+                                "公民和组织因协助人民警察执行职务，造成人身伤亡或者财产损失的，应当按照国家有关规定给予抚恤或者补偿"
+                            ],
+                            "拒绝或阻碍执行职务的情形（5项）": [
+                                "①公然侮辱正在执行职务的人民警察的",
+                                "②阻碍人民警察调查取证的",
+                                "③拒绝或者阻碍人民警察执行追捕、搜查、救险等任务进入有关住所、场所的",
+                                "④对执行救人、救险、追捕、警卫等紧急任务的警车故意设置障碍的",
+                                "⑤有拒绝或者阻碍人民警察执行职务的其他行为的"
+                            ],
+                            "法律责任": [
+                                "拒绝或者阻碍人民警察依法执行职务的，给予治安管理处罚",
+                                "以暴力、威胁方法实施的，构成犯罪的，依法追究刑事责任"
+                            ]
+                        },
+                        related: ["妨害公务罪", "治安管理处罚"]
+                    },
+                    "人民警察装备保障": {
+                        content: {
+                            "监制": [
+                                "人民警察的警用标志、制式服装、警械、证件由国务院公安部门统一监制",
+                                "会同其他有关国家机关管理",
+                                "其他个人和组织不得非法制造、贩卖"
+                            ],
+                            "使用": [
+                                "人民警察的警用标志、制式服装、警械、证件为人民警察专用",
+                                "其他个人和组织不得持有和使用"
+                            ],
+                            "法律责任": [
+                                "违反上述规定的，没收非法制造、贩卖、持有、使用的人民警察警用标志、制式服装、警械、证件",
+                                "由公安机关处15日以下拘留或者警告",
+                                "可以并处违法所得5倍以下的罚款",
+                                "构成犯罪的，依法追究刑事责任"
+                            ]
+                        },
+                        related: ["警用标志管理", "制式服装"]
+                    }
+                }
+            },
+            "刑法与刑事诉讼法": {
+                color: "#c2185b",
+                chapters: {
+                    "刑法的基本原则与适用效力": {
+                        content: {
+                            "刑法的基本原则（3项）": [
+                                "罪刑法定原则：法无明文规定不为罪，法无明文规定不处罚",
+                                "平等适用刑法原则：刑法面前人人平等，在根据其内容应当得到适用的所有场合，都予以严格适用",
+                                "罪责刑相适应原则：刑罚的轻重，应当与犯罪分子所犯罪行和承担的刑事责任相适应"
+                            ],
+                            "刑法的空间效力（4种管辖）": [
+                                "属地管辖：凡在中华人民共和国领域内犯罪的（除法律特别规定外）都适用我国刑法。犯罪地指行为地、结果地之一即可",
+                                "属人管辖：中国人在国外犯罪，最高刑为3年以下有期徒刑的可以不予追究。我国国家工作人员和军人一律追究",
+                                "保护管辖：以保护本国利益为标准，凡侵害本国国家或公民利益的，不论犯罪人是本国人还是外国人，不论犯罪地在本国还是外国，都适用本法",
+                                "普遍管辖：我国缔结或参加的国际条约所规定的犯罪"
+                            ],
+                            "刑法的时间效力": [
+                                "生效时间：公布之日起生效，或公布后经过一段时间再施行",
+                                "失效时间：明确宣布失效，或新法代替旧法自然失效",
+                                "溯及力（4个原则）：从旧原则、从新原则、从新兼从轻原则、从旧兼从轻原则",
+                                "中国刑法采用从旧兼从轻原则"
+                            ]
+                        },
+                        related: ["法的适用范围", "法的溯及力"]
+                    },
+                    "犯罪构成": {
+                        content: {
+                            "犯罪的定义": [
+                                "一切危害社会的行为，依照法律应当受刑罚处罚的，都是犯罪"
+                            ],
+                            "犯罪的三个基本特征": [
+                                "严重危害社会的行为",
+                                "触犯刑律的行为",
+                                "应受刑罚惩罚的行为"
+                            ],
+                            "犯罪主体—完全刑事责任能力": [
+                                "①年满16周岁",
+                                "②间歇性精神病人精神正常时",
+                                "③醉酒的人犯罪"
+                            ],
+                            "犯罪主体—完全无刑事责任能力": [
+                                "①不满12周岁的人",
+                                "②不能辨认或者不能控制自己行为的精神病人"
+                            ],
+                            "犯罪主体—相对无刑事责任能力": [
+                                "已满14周岁不满16周岁的人，犯故意杀人、故意伤害致人重伤或死亡、强奸、抢劫、贩卖毒品、放火、爆炸、投放危险物质罪的，应当负刑事责任",
+                                "已满12周岁不满14周岁的人，犯故意杀人、故意伤害罪致人死亡或以特别残忍手段致人重伤造成严重残疾，情节恶劣，经最高人民检察院核准追诉的，应当负刑事责任"
+                            ],
+                            "犯罪主体—减轻刑事责任能力": [
+                                "①已满14周岁不满18周岁的未成年人",
+                                "②已满75周岁的人",
+                                "③又聋又哑的人、盲人",
+                                "④尚未完全丧失辨认或控制自己行为能力的精神病人"
+                            ],
+                            "犯罪主观方面": [
+                                "直接故意：明知自己的行为会发生危害社会的结果，并且希望这种结果发生",
+                                "间接故意：明知自己的行为可能发生危害社会的结果，并且有意放任，以致发生这种结果",
+                                "疏忽大意的过失：应当预见自己的行为可能发生危害社会的结果，因疏忽大意而没有预见，以致发生这种结果",
+                                "过于自信的过失：已经预见自己的行为可能发生危害社会的结果，但轻信能够避免，以致发生这种结果"
+                            ],
+                            "犯罪客体": [
+                                "指我国刑法所保护而为犯罪行为所侵犯的社会关系",
+                                "犯罪客体是犯罪构成的必要要件",
+                                "一个行为不侵犯任何社会关系，就不能构成犯罪"
+                            ],
+                            "犯罪客观方面": [
+                                "危害行为：作为（积极的身体举动）和不作为（能够履行义务而不履行）",
+                                "危害结果：危害行为对犯罪直接客体造成的法定的实际损害或现实的危险状态",
+                                "因果关系：危害行为同危害结果之间存在的引起与被引起的关系"
+                            ]
+                        },
+                        related: ["民事行为能力", "治安管理责任年龄"]
+                    },
+                    "犯罪形态": {
+                        content: {
+                            "犯罪预备": [
+                                "为了犯罪，准备工具、制造条件，但由于行为人意志以外的原因而未能着手实行犯罪的情形"
+                            ],
+                            "犯意表示": [
+                                "将犯罪意图通过书面或口头的方式表达出来（不构成犯罪）"
+                            ],
+                            "犯罪未遂": [
+                                "已经着手实行犯罪，由于犯罪分子意志以外的原因而未得逞的"
+                            ],
+                            "犯罪中止": [
+                                "犯罪分子在实施犯罪过程中，自动放弃犯罪或者自动有效地防止犯罪结果发生的行为"
+                            ],
+                            "犯罪既遂": [
+                                "犯罪完成形态"
+                            ],
+                            "处罚": [
+                                "对于预备犯，可以比照既遂犯从轻、减轻处罚或者免除处罚",
+                                "对于未遂犯，可以比照既遂犯从轻或减轻处罚",
+                                "对于中止犯，没有造成损害的，应当免除处罚；造成损害的，应当减轻处罚"
+                            ]
+                        },
+                        related: ["犯罪既遂", "犯罪未遂"]
+                    },
+                    "排除犯罪的事由": {
+                        content: {
+                            "正当防卫": [
+                                "为了使国家、公共利益、本人或他人的人身、财产和其他权利免受正在进行的不法侵害，而采取的制止不法侵害的行为，对不法侵害人造成损害的，属于正当防卫，不负刑事责任",
+                                "财产性犯罪，如果能当场追回财物，视为不法侵害仍在继续，仍可防卫"
+                            ],
+                            "防卫过当": [
+                                "正当防卫明显超过必要限度造成重大损害的行为",
+                                "对于防卫过当的，应当减轻或者免除处罚"
+                            ],
+                            "无过当防卫（特殊正当防卫）": [
+                                "对正在进行行凶、杀人、抢劫、强奸、绑架以及其他严重危及人身安全的暴力犯罪，采取防卫行为，造成不法侵害人伤亡的，不属于防卫过当，不负刑事责任"
+                            ],
+                            "紧急避险": [
+                                "在法律所保护的权益遇到危险而不可能采用其他措施加以避免时，不得已而采用的损害另一个较小的权益以保护较大的权益免遭损害的行为",
+                                "紧急避险行为不负刑事责任",
+                                "紧急避险不适用于职务上、业务上负有特定责任的人",
+                                "紧急避险超过必要限度造成不应有的损害的，应当负刑事责任，但是应当减轻或者免除处罚"
+                            ]
+                        },
+                        related: ["正当防卫", "紧急避险"]
+                    },
+                    "共同犯罪": {
+                        content: {
+                            "成立条件（3项）": [
+                                "①必须二人以上",
+                                "②必须有共同故意",
+                                "③必须有共同行为"
+                            ],
+                            "共同犯罪既遂": [
+                                "一人既遂，全部既遂"
+                            ],
+                            "排除情形（3项）": [
+                                "①同时犯",
+                                "②超出共同故意之外的犯罪",
+                                "③间接正犯"
+                            ],
+                            "主犯": [
+                                "组织、领导犯罪集团进行犯罪活动或者在共同犯罪中起主要作用的是主犯",
+                                "对于组织、领导犯罪集团进行犯罪活动的首要分子，按照集团所犯的全部罪行处罚"
+                            ],
+                            "从犯": [
+                                "在共同犯罪中起次要或者辅助作用的犯罪分子"
+                            ],
+                            "胁从犯": [
+                                "被胁迫参加犯罪的人，即在他人威胁下不完全自愿地参加共同犯罪，并且在共同犯罪中起较小作用的人"
+                            ],
+                            "教唆犯": [
+                                "以劝说、利诱、授意、怂恿、收买、威胁等方法，将自己的犯罪意图灌输给本来没有犯罪意图的人，致使其按教唆人的犯罪意图实施犯罪",
+                                "教唆不满18周岁的人犯罪的，应当从重处罚",
+                                "如果被教唆的人没有犯被教唆的罪，对于教唆犯可以从轻或者减轻处罚"
+                            ]
+                        },
+                        related: ["犯罪集团", "单位犯罪"]
+                    },
+                    "量刑": {
+                        content: {
+                            "累犯—概念": [
+                                "因犯罪而受过一定的刑罚处罚，在刑罚执行完毕或者赦免以后，在法定期限内又犯一定之罪的罪犯"
+                            ],
+                            "一般累犯（4个条件）": [
+                                "①前后两罪都是故意犯罪",
+                                "②前后两罪都应当是有期徒刑以上刑罚的犯罪",
+                                "③后罪在前罪的刑罚执行完毕或赦免以后5年之内",
+                                "④不满18周岁的人犯罪的，不成立累犯"
+                            ],
+                            "特殊累犯": [
+                                "因犯危害国家安全罪、恐怖活动犯罪、黑社会性质的组织犯罪的犯罪分子，在刑罚执行完毕或者赦免后，在任何时候再犯上述任一类罪的情形"
+                            ],
+                            "累犯的处罚": [
+                                "对累犯应当从重处罚",
+                                "对累犯不适用缓刑，不得假释"
+                            ],
+                            "自首": [
+                                "犯罪以后自动投案，如实供述自己罪行的行为",
+                                "被采取强制措施的犯罪嫌疑人、被告人和正在服刑的罪犯，如实供述司法机关还未掌握的本人其他罪行的行为",
+                                "对于自首的犯罪分子，可以从轻或减轻处罚。其中，犯罪较轻的，可以免除处罚"
+                            ],
+                            "立功": [
+                                "揭发他人的犯罪行为，查证属实的，或者提供重要线索，从而得以侦破其他案件等的行为",
+                                "对于有立功表现的犯罪分子，可以从轻或者减轻处罚",
+                                "有重大立功表现的，可以减轻或者免除处罚"
+                            ]
+                        },
+                        related: ["量刑情节", "刑罚执行"]
+                    },
+                    "刑罚": {
+                        content: {
+                            "主刑（5种）": [
+                                "①管制：3个月~2年，不关押，限制自由",
+                                "②拘役：1个月~6个月，短期剥夺自由，就近执行",
+                                "③有期徒刑：6个月~15年，剥夺自由一定期限（数罪并罚最高不超过25年）",
+                                "④无期徒刑：剥夺自由终身",
+                                "⑤死刑：剥夺生命，包括立即执行和缓期二年执行"
+                            ],
+                            "附加刑（3种）": [
+                                "①罚金：强制缴纳一定数额金钱",
+                                "②剥夺政治权利：剥夺选举权被选举权等政治权利，期限1年~5年，或终身",
+                                "③没收财产：没收犯罪分子个人所有财产的一部或全部"
+                            ],
+                            "死刑适用限制": [
+                                "犯罪时不满18周岁的人不适用死刑",
+                                "审判时怀孕的妇女不适用死刑",
+                                "审判时已满75周岁的人不适用死刑（以特别残忍手段致人死亡的除外）",
+                                "死刑除依法由最高人民法院判决的以外，都应当报请最高人民法院核准"
+                            ],
+                            "死刑缓期执行": [
+                                "死刑缓期执行期间，如果没有故意犯罪，2年期满后减为无期徒刑",
+                                "如果确有重大立功表现，2年期满后减为25年有期徒刑",
+                                "如果故意犯罪，情节恶劣的，报请最高人民法院核准后执行死刑"
+                            ],
+                            "缓刑": [
+                                "适用对象：被判处拘役、3年以下有期徒刑的犯罪分子",
+                                "适用条件：根据犯罪情节和悔罪表现，适用缓刑确实不致再危害社会",
+                                "应当宣告缓刑：不满18周岁的人、怀孕的妇女和已满75周岁的人",
+                                "不适用缓刑：累犯、犯罪集团首要分子",
+                                "考验期：拘役的缓刑考验期为原判刑期以上1年以下，但不能少于2个月；有期徒刑的缓刑考验期为原判刑期以上5年以下，但不能少于1年"
+                            ],
+                            "减刑": [
+                                "适用对象：被判处管制、拘役、有期徒刑、无期徒刑的犯罪分子",
+                                "条件：在执行期间，认真遵守监规，接受教育改造，确有悔改表现或立功表现",
+                                "限制：减刑后实际执行的刑期，判处管制、拘役、有期徒刑的不能少于原判刑期的1/2；判处无期徒刑的不能少于13年；判处死缓的不能少于25年"
+                            ],
+                            "假释": [
+                                "适用对象：被判处有期徒刑、无期徒刑的犯罪分子",
+                                "条件：执行一定刑期后，认真遵守监规，接受教育改造，确有悔改表现，没有再犯罪的危险",
+                                "刑期要求：有期徒刑执行原判刑期1/2以上，无期徒刑实际执行13年以上",
+                                "不适用假释：累犯、因故意杀人等暴力性犯罪被判处10年以上有期徒刑、无期徒刑的犯罪分子",
+                                "考验期：有期徒刑的假释考验期为没有执行完毕的刑期；无期徒刑的假释考验期为10年"
+                            ],
+                            "数罪并罚原则": [
+                                "判决宣告以前一人犯数罪的，除判处死刑和无期徒刑的以外，应当在总和刑期以下、数刑中最高刑期以上，酌情决定执行的刑期",
+                                "有期徒刑总和刑期不满35年的，最高不能超过20年；总和刑期在35年以上的，最高不能超过25年",
+                                "数罪中有判处附加刑的，附加刑仍须执行，其中附加刑种类相同的，合并执行"
+                            ]
+                        },
+                        related: ["行政处罚", "治安处罚", "量刑"]
+                    },
+                    "分则重要罪名": {
+                        content: {
+                            "抢劫罪": [
+                                "以非法占有为目的，以暴力、胁迫或者其他方法，强行劫取公私财物的行为",
+                                "转化犯：①携带凶器抢夺的 ②犯盗窃诈骗抢夺罪，为窝藏赃物、抗拒抓捕或毁灭罪证而当场使用暴力或以暴力相威胁的 ③聚众打砸抢，对首要分子"
+                            ],
+                            "抢夺罪": [
+                                "以非法占有为目的，乘人不备，公开夺取数额较大的公私财物的行为"
+                            ],
+                            "侵占罪": [
+                                "将代为保管的他人财物非法占为己有，数额较大，拒不退还的，或者将他人的遗忘物或埋藏物非法占为己有，数额较大，拒不交出的行为"
+                            ],
+                            "盗窃罪": [
+                                "以非法占有为目的，窃取公私财物数额较大，或者多次盗窃、入户盗窃、携带凶器盗窃、扒窃的行为"
+                            ],
+                            "危险驾驶罪（4种情形）": [
+                                "①追逐竞驶，情节恶劣的",
+                                "②醉酒驾驶机动车的",
+                                "③从事校车业务或旅客运输，严重超过额定乘员载客或严重超过规定时速行驶的",
+                                "④违反危险化学品安全管理规定运输危险化学品，危及公共安全的"
+                            ],
+                            "交通肇事罪": [
+                                "违反交通运输管理法规，因而发生重大交通事故，致人重伤、死亡或使公私财产遭受重大损失的行为"
+                            ],
+                            "强奸罪": [
+                                "普通强奸：违背妇女意志，使用暴力、胁迫或其他手段，强行与妇女发生性交的行为",
+                                "奸淫幼女（准强奸）：与不满14周岁的幼女发生性交的行为"
+                            ],
+                            "侮辱国旗国徽国歌罪": [
+                                "在公共场合，故意以焚烧、毁损、涂划、玷污、践踏等方式侮辱国旗、国徽的，处3年以下有期徒刑、拘役、管制或剥夺政治权利",
+                                "在公共场合，故意篡改国歌歌词、曲谱，以歪曲、贬损方式奏唱国歌，或以其他方式侮辱国歌，情节严重的，依照前款规定处罚"
+                            ],
+                            "绑架罪": [
+                                "利用被绑架人的近亲属或其他人对被绑架人安危的忧虑，以勒索财物或满足其他不法要求为目的，使用暴力、胁迫或麻醉方法劫持或以实力控制他人的行为"
+                            ],
+                            "故意伤害罪": [
+                                "故意非法损害他人身体健康的行为"
+                            ]
+                        },
+                        related: ["侵犯财产罪", "危害公共安全罪"]
+                    }
+                }
+            },
+            "民法与民事诉讼法": {
+                color: "#388e3c",
+                chapters: {
+                    "民法概述与基本原则": {
+                        content: {
+                            "民法概念": [
+                                "民法是调整平等主体的自然人、法人和非法人组织之间人身关系和财产关系的法律规范的总称"
+                            ],
+                            "民法基本原则（6项）": [
+                                "平等原则：民法调整平等主体的关系，民事主体地位平等",
+                                "自愿原则（意思自治原则）：不能强迫对方",
+                                "公平原则：合理均衡，责任分担合理，利益分配均衡",
+                                "诚实信用原则：民事主体从事民事活动，应当遵循诚信原则，秉持诚实，恪守承诺",
+                                "不得违反法律和公序良俗的原则：不得违反各种法律的强制性规定，不得违背公共秩序和善良风俗",
+                                "绿色原则：有利于节约资源和保护生态环境的原则"
+                            ]
+                        },
+                        related: ["法的基本原则", "公平正义"]
+                    },
+                    "自然人": {
+                        content: {
+                            "民事权利能力": [
+                                "起止时间：从出生时起到死亡时止",
+                                "出生时间和死亡时间：以出生证明、死亡证明记载的时间为准；没有的以户籍登记或其他有效身份登记记载的时间为准",
+                                "关于胎儿：涉及遗产继承、接受赠与等胎儿利益保护的，胎儿视为具有民事权利能力。但胎儿娩出时为死体的，其民事权利能力自始不存在"
+                            ],
+                            "民事行为能力": [
+                                "完全民事行为能力人：①18周岁以上的自然人 ②16周岁以上的未成年人，以自己的劳动收入为主要生活来源的，视为完全民事行为能力人",
+                                "限制民事行为能力人：①8周岁以上的未成年人 ②不能完全辨认自己行为的成年人。实施民事法律行为由其法定代理人代理或经其法定代理人同意、追认，但可以独立实施纯获利益的民事法律行为或与其年龄、智力相适应的民事法律行为",
+                                "无民事行为能力人：①不满8周岁的未成年人 ②不能辨认自己行为的人。由其法定代理人代理实施民事法律行为"
+                            ],
+                            "监护": [
+                                "未成年子女的监护人：①父母是未成年子女的监护人 ②父母已经死亡或没有监护能力的，由祖父母外祖父母、兄姐、其他愿意担任监护人的个人或组织按顺序担任",
+                                "成年人的监护人：配偶→父母子女→其他近亲属→其他愿意担任监护人的个人或组织"
+                            ],
+                            "宣告失踪": [
+                                "主体条件：必须由利害关系人向人民法院申请",
+                                "客体条件：①有下落不明的事实 ②下落不明必须满2年（战争期间下落不明的，从战争结束之日起算）",
+                                "形式条件：申请必须采用书面形式，必须经人民法院依照法定程序宣告失踪"
+                            ],
+                            "宣告死亡（420口诀）": [
+                                "条件：①下落不明满4年 ②因意外事件下落不明满2年 ③因意外事件下落不明，经有关机关证明该自然人不可能生存的，申请宣告死亡不受2年时间限制（0年）",
+                                "公告期：一年；三个月",
+                                "效力：从形式上说，宣告死亡与自然死亡有同等的法律效果"
+                            ]
+                        },
+                        related: ["刑事责任年龄", "行政责任年龄"]
+                    },
+                    "民事法律行为": {
+                        content: {
+                            "有效的民事法律行为（3个条件）": [
+                                "①行为人具有相应的民事行为能力",
+                                "②意思表示真实",
+                                "③不违反法律、行政法规的强制性规定，不违背公序良俗"
+                            ],
+                            "无效的民事法律行为（5种）": [
+                                "①无民事行为能力人实施的民事法律行为无效",
+                                "②行为人与相对人以虚假的意思表示实施的民事法律行为无效",
+                                "③行为人与相对人恶意串通，损害他人合法权益的民事法律行为无效",
+                                "④违背公序良俗的民事法律行为无效",
+                                "⑤违反法律、行政法规的强制性规定的民事法律行为无效（但该强制性规定不导致该民事法律行为无效的除外）"
+                            ],
+                            "可撤销的民事法律行为（4种）": [
+                                "①重大误解",
+                                "②欺诈",
+                                "③胁迫",
+                                "④显失公平"
+                            ],
+                            "效力待定的民事法律行为（3种）": [
+                                "①欠缺代理权的代理行为",
+                                "②限制民事行为能力人实施的超越其民事行为能力范围的行为",
+                                "③无权处分行为"
+                            ]
+                        },
+                        related: ["法律行为", "意思表示"]
+                    },
+                    "民事权利": {
+                        content: {
+                            "人格权（9种）": [
+                                "生命权、身体权、健康权、姓名权、名称权、肖像权、名誉权、荣誉权、隐私权",
+                                "法人、非法人组织享有名称权、名誉权和荣誉权"
+                            ],
+                            "身份权": [
+                                "亲权、配偶权、亲属权"
+                            ],
+                            "财产权": [
+                                "物权：权利人依法对特定的物享有直接支配和排他的权利。包括所有权、用益物权、担保物权",
+                                "债权：请求他人为一定行为（作为或不作为）而得到生活上的利益的权利。包括合同之债、无因管理之债、不当得利之债、侵权行为之债",
+                                "继承权：根据法律规定或者死者生前所立有效遗嘱指定取得被继承人遗产的权利",
+                                "知识产权中的财产权利：权利人对其所创作的智力劳动成果所享有的专有权利。包括商标权、专利权、著作权等"
+                            ]
+                        },
+                        related: ["人身权", "财产权"]
+                    },
+                    "诉讼时效": {
+                        content: {
+                            "一般时效": [
+                                "3年，自知道或应当知道权利受损及义务人之日起算"
+                            ],
+                            "最长时效": ["20年，自权利受损之日起算"],
+                            "时效中断": ["提出履行请求、义务人同意履行、提起诉讼或仲裁"],
+                            "效果": ["时效届满，丧失胜诉权，但实体权利不消灭"]
+                        },
+                        related: ["刑事追诉时效", "行政处罚时效"]
+                    }
+                }
+            },
+            "公安机关办理行政案件程序": {
+                color: "#f57c00",
+                chapters: {
+                    "管辖": {
+                        content: {
+                            "一般管辖原则": [
+                                "行政案件由违法行为地的公安机关管辖",
+                                "由违法行为人居住地公安机关管辖更为适宜的，可以由违法行为人居住地公安机关管辖",
+                                "但涉及卖淫、嫖娼、赌博、毒品的案件除外"
+                            ],
+                            "违法行为地": [
+                                "包括违法行为发生地和违法结果发生地",
+                                "违法行为发生地：违法行为的实施地、开始地、途经地、结束地等与违法行为有关的地点",
+                                "违法行为有连续、持续或继续状态的，连续、持续或继续实施的地方都属于违法行为发生地",
+                                "违法结果发生地：违法对象被侵害地、违法所得的实际取得地、藏匿地、转移地、使用地、销售地"
+                            ],
+                            "居住地管辖特殊规定": [
+                                "涉及卖淫、嫖娼、赌博、毒品的案件不适用居住地管辖"
+                            ],
+                            "共同管辖": [
+                                "几个公安机关都有权管辖的，由最初受理的公安机关管辖",
+                                "必要时，可以由主要违法行为地的公安机关管辖"
+                            ],
+                            "管辖争议": [
+                                "管辖权发生争议的，应当协商解决",
+                                "协商不成的，报请共同的上一级公安机关指定管辖"
+                            ]
+                        },
+                        related: ["刑事管辖", "行政诉讼管辖"]
+                    },
+                    "回避": {
+                        content: {
+                            "回避情形（3种）": [
+                                "①是本案的当事人或者当事人近亲属的",
+                                "②本人或者其近亲属与本案有利害关系的",
+                                "③与本案当事人有其他关系，可能影响案件公正处理的"
+                            ],
+                            "回避种类（3种）": [
+                                "自行回避：应当自行提出回避申请",
+                                "申请回避：案件当事人及其法定代理人有权要求他们回避",
+                                "指令回避：有权决定其回避的公安机关可以指令其回避"
+                            ],
+                            "回避决定主体": [
+                                "办案人民警察的回避：由其所属的公安机关决定",
+                                "公安机关负责人的回避：由上一级公安机关决定",
+                                "鉴定人、翻译人员的回避：由指派或者聘请的公安机关决定"
+                            ],
+                            "回避申请处理": [
+                                "对当事人及其法定代理人提出的回避申请，公安机关应当在收到申请之日起2日内作出决定并通知申请人"
+                            ],
+                            "回避决定前后的处理": [
+                                "作出回避决定前，办案人民警察不得停止对行政案件的调查",
+                                "作出回避决定后，不得再参与该行政案件的调查和审核、审批工作",
+                                "被决定回避的人员在回避决定作出前所进行的活动是否有效，由作出回避决定的公安机关根据是否影响案件依法公正处理等情况决定"
+                            ]
+                        },
+                        related: ["刑事回避", "治安回避"]
+                    },
+                    "证据": {
+                        content: {
+                            "证据种类（8种）": [
+                                "①物证",
+                                "②书证",
+                                "③被侵害人陈述和其他证人证言",
+                                "④违法嫌疑人的陈述和申辩",
+                                "⑤鉴定意见",
+                                "⑥勘验、检查、辨认笔录，现场笔录",
+                                "⑦视听资料、电子数据",
+                                "证据必须经过查证属实，才能作为定案的根据"
+                            ],
+                            "证据收集原则": [
+                                "公安机关必须依照法定程序，收集能够证实违法嫌疑人是否违法、违法情节轻重的证据",
+                                "严禁刑讯逼供和以威胁、欺骗等非法方法收集证据"
+                            ],
+                            "非法证据排除": [
+                                "采用刑讯逼供等非法方法收集的违法嫌疑人陈述和申辩不能作为定案的根据",
+                                "采用暴力、威胁等非法方法收集的被侵害人陈述、其他证人证言不能作为定案的根据",
+                                "收集物证、书证不符合法定程序，可能严重影响执法公正的，应当予以补正或者作出合理解释",
+                                "不能补正或者作出合理解释的，不能作为定案的根据"
+                            ],
+                            "证据调取": [
+                                "需要向有关单位和个人调取证据的，经公安机关办案部门负责人批准，开具调取证据通知书",
+                                "明确调取的证据和提供时限"
+                            ],
+                            "物证收集": [
+                                "收集调取的物证应当是原物",
+                                "在原物不便搬运、不易保存或依法应当由有关部门保管、处理或依法应当返还时，可以拍摄或制作照片、录像",
+                                "物证的照片、录像，经与原物核实无误或经鉴定证明为真实的，可以作为证据使用"
+                            ],
+                            "证人": [
+                                "凡知道案件情况的人，都有作证的义务",
+                                "生理上、精神上有缺陷或者年幼，不能辨别是非、不能正确表达的人，不能作为证人"
+                            ]
+                        },
+                        related: ["刑事证据", "民事证据"]
+                    },
+                    "传唤询问": {
+                        content: {
+                            "调查取证人数要求": [
+                                "公安机关进行询问、辨认、检查、勘验，实施行政强制措施等调查取证工作时，人民警察不得少于2人",
+                                "接报案、受案登记、接受证据、信息采集、调解、送达文书等工作，可以由1名人民警察带领警务辅助人员进行，但应当全程录音录像"
+                            ],
+                            "书面传唤": [
+                                "经公安派出所、县级以上公安机关办案部门或者出入境边防检查机关负责人批准，使用传唤证传唤"
+                            ],
+                            "口头传唤": [
+                                "对现场发现的违法嫌疑人，人民警察经出示人民警察证，可以口头传唤",
+                                "在询问笔录中注明违法嫌疑人到案经过、到案时间和离开时间"
+                            ],
+                            "强制传唤": [
+                                "对无正当理由不接受传唤或者逃避传唤的违法嫌疑人，经负责人批准，可以强制传唤",
+                                "强制传唤时，可以依法使用手铐、警绳等约束性警械"
+                            ],
+                            "询问地点": [
+                                "可以到违法嫌疑人住处或者单位进行",
+                                "也可以将违法嫌疑人传唤到其所在市、县内的指定地点进行",
+                                "在公安机关询问违法嫌疑人，应当在办案场所进行"
+                            ],
+                            "询问时间": [
+                                "一般不超过8小时",
+                                "情况复杂、可能适用行政拘留处罚的，不超过24小时",
+                                "不得连续传唤"
+                            ],
+                            "询问要求": [
+                                "应当个别进行",
+                                "可以全程录音、录像",
+                                "询问前告知权利义务"
+                            ],
+                            "特殊对象询问": [
+                                "询问未成年人（不满16周岁），应当通知其父母或其他监护人到场",
+                                "询问聋哑人，应当有通晓手语的人提供帮助，并在笔录上注明",
+                                "询问不通晓当地语言文字的人，应当配备翻译人员，并在笔录上注明"
+                            ],
+                            "检查": [
+                                "检查时人民警察不得少于2人",
+                                "应当出示人民警察证件和县级以上公安机关开具的检查证明文件",
+                                "对确有必要立即进行检查的，可以当场检查",
+                                "但检查公民住所应当出示县级以上公安机关开具的检查证明文件",
+                                "检查妇女的身体应当由女性工作人员进行"
+                            ]
+                        },
+                        related: ["刑事传唤", "治安传唤"]
+                    },
+                    "处罚程序": {
+                        content: {
+                            "简易程序适用条件": [
+                                "违法事实确凿",
+                                "有法定依据",
+                                "对公民处以200元以下罚款或者对法人或者其他组织处以3000元以下罚款或者警告"
+                            ],
+                            "简易程序要求": [
+                                "当场作出处罚决定",
+                                "告知违法事实、处罚理由、处罚依据、救济途径",
+                                "填写预定格式、编有号码的行政处罚决定书",
+                                "当场交付被处罚人"
+                            ],
+                            "一般程序": [
+                                "受理：及时受理并进行登记",
+                                "调查取证：收集证据",
+                                "审核：办案部门负责人审核",
+                                "决定：作出处罚决定或不予处罚决定",
+                                "告知：告知当事人作出处罚决定的事实、理由、依据以及依法享有的权利",
+                                "执行：送达处罚决定书，执行处罚决定"
+                            ],
+                            "听证程序": [
+                                "作出罚款2000元以上、吊销许可证和执照、责令停产停业、行政拘留等处罚决定之前，应当告知当事人有要求听证的权利",
+                                "当事人要求听证的，公安机关应当组织听证",
+                                "当事人不承担听证费用"
+                            ],
+                            "办案期限": [
+                                "一般案件：30日办结",
+                                "重大复杂案件：经负责人批准可延长30日",
+                                "最长：60日"
+                            ],
+                            "快速办理": [
+                                "事实清楚、违法嫌疑人自愿认错认罚的，48小时内办结"
+                            ],
+                            "处罚时效": [
+                                "违法行为在6个月内未被发现的，不再给予行政处罚",
+                                "违法行为有连续或者继续状态的，从行为终了之日起计算"
+                            ]
+                        },
+                        related: ["行政处罚程序", "刑事程序"]
+                    }
+                }
+            },
+            "治安管理处罚法": {
+                color: "#512da8",
+                chapters: {
+                    "概念与基本原则": {
+                        content: {
+                            "立法目的": [
+                                "维护社会治安秩序",
+                                "保障公共安全",
+                                "保护公民、法人和其他组织的合法权益",
+                                "规范和保障公安机关及其人民警察依法履行治安管理职责"
+                            ],
+                            "处罚法定原则": [
+                                "违反治安管理的行为，法律已有规定的，依照法律规定处罚",
+                                "法律没有规定的，不得处罚"
+                            ],
+                            "以事实为依据、处罚和行为相适应原则": [
+                                "治安管理处罚必须以事实为依据",
+                                "与违反治安管理行为的性质、情节以及社会危害程度相当"
+                            ],
+                            "处罚公开公正原则": [
+                                "实施治安管理处罚应当公开、公正",
+                                "尊重和保障人权",
+                                "保护公民的人格尊严"
+                            ],
+                            "处罚与教育相结合原则": [
+                                "办理治安案件应当坚持教育与处罚相结合的原则"
+                            ],
+                            "适用范围": [
+                                "在中华人民共和国领域内发生的违反治安管理行为，除法律有特别规定的外，适用本法",
+                                "在中华人民共和国船舶和航空器内发生的违反治安管理行为，除法律有特别规定的外，适用本法",
+                                "享有外交或领事特权与豁免的外国人不适用本法，应当通过外交途径解决"
+                            ]
+                        },
+                        related: ["立法目的", "基本原则"]
+                    },
+                    "处罚种类及适用": {
+                        content: {
+                            "处罚种类": [
+                                "警告",
+                                "罚款（200元以下~3000元）",
+                                "行政拘留（1日~15日）",
+                                "吊销公安机关发放的许可证",
+                                "对违反治安管理的外国人可附加适用限期出境或驱逐出境"
+                            ],
+                            "不满14周岁": [
+                                "不予处罚",
+                                "应当责令其监护人严加管教"
+                            ],
+                            "已满14周岁不满18周岁": [
+                                "从轻或者减轻处罚"
+                            ],
+                            "精神病人": [
+                                "不能辨认或者不能控制自己行为的精神病人：不予处罚",
+                                "间歇性精神病人在精神正常时：应当给予处罚",
+                                "应当责令其监护人严加看管和治疗"
+                            ],
+                            "盲人或者又聋又哑的人": [
+                                "可以从轻、减轻或者不予处罚"
+                            ],
+                            "减轻或不予处罚情形": [
+                                "①情节特别轻微的",
+                                "②主动消除或者减轻违法后果，并取得被侵害人谅解的",
+                                "③出于他人胁迫或者诱骗的",
+                                "④主动投案，向公安机关如实陈述自己的违法行为的",
+                                "⑤有立功表现的"
+                            ],
+                            "从重处罚情形": [
+                                "①有较严重后果的",
+                                "②教唆、胁迫、诱骗他人违反治安管理的",
+                                "③对报案人、控告人、举报人、证人打击报复的",
+                                "④6个月内曾受过治安管理处罚的"
+                            ],
+                            "不执行行政拘留情形": [
+                                "①已满14周岁不满16周岁的",
+                                "②已满16周岁不满18周岁，初次违反治安管理的",
+                                "③70周岁以上的",
+                                "④怀孕或者哺乳自己不满1周岁婴儿的"
+                            ]
+                        },
+                        related: ["行政处罚", "刑事处罚"]
+                    },
+                    "治安案件的受理与调查": {
+                        content: {
+                            "受理": [
+                                "公安机关对报案、控告、举报或违反治安管理行为人主动投案，以及其他行政主管部门、司法机关移送的违反治安管理案件，应当及时受理并进行登记",
+                                "认为属于违反治安管理行为的，应当立即进行调查",
+                                "认为不属于违反治安管理行为的，应当告知报案人、控告人、举报人、投案人，并说明理由"
+                            ],
+                            "回避制度": [
+                                "是本案当事人或者当事人近亲属的",
+                                "本人或者其近亲属与本案有利害关系的",
+                                "与本案当事人有其他关系，可能影响案件公正处理的",
+                                "人民警察的回避由其所属公安机关决定",
+                                "公安机关负责人的回避由上一级公安机关决定"
+                            ],
+                            "传唤": [
+                                "需要传唤的，经公安机关办案部门负责人批准，使用传唤证传唤",
+                                "对现场发现的违反治安管理行为人，人民警察经出示工作证件，可以口头传唤，但应当在询问笔录中注明",
+                                "公安机关应当将传唤的原因和依据告知被传唤人",
+                                "对无正当理由不接受传唤或者逃避传唤的人，可以强制传唤"
+                            ],
+                            "询问查证时间": [
+                                "公安机关传唤后应当及时询问查证",
+                                "询问查证的时间不得超过8小时",
+                                "情况复杂、依照本法规定可能适用行政拘留处罚的，询问查证的时间不得超过24小时",
+                                "公安机关应当及时将传唤的原因和处所通知被传唤人家属"
+                            ],
+                            "询问不满16周岁的违反治安管理行为人": [
+                                "应当通知其父母或者其他监护人到场",
+                                "人民警察询问被侵害人或者其他证人，可以到其所在单位或者住处进行",
+                                "必要时也可以通知其到公安机关提供证言"
+                            ],
+                            "询问聋哑人": [
+                                "应当有通晓手语的人提供帮助，并在笔录上注明"
+                            ],
+                            "询问不通晓当地通用语言文字的人": [
+                                "应当配备翻译人员，并在笔录上注明"
+                            ],
+                            "检查": [
+                                "公安机关对与违反治安管理行为有关的场所、物品、人身可以进行检查",
+                                "检查时人民警察不得少于2人",
+                                "应当出示工作证件和县级以上人民政府公安机关开具的检查证明文件",
+                                "对确有必要立即进行检查的，人民警察经出示工作证件可以当场检查",
+                                "但检查公民住所应当出示县级以上人民政府公安机关开具的检查证明文件",
+                                "检查妇女的身体应当由女性工作人员进行",
+                                "检查的情况应当制作检查笔录，由检查人、被检查人和见证人签名或盖章",
+                                "被检查人拒绝签名的，人民警察应当在笔录上注明"
+                            ]
+                        },
+                        related: ["行政案件程序", "刑事案件程序"]
+                    },
+                    "治安调解": {
+                        content: {
+                            "适用范围": [
+                                "对于因民间纠纷引起的打架斗殴或者损毁他人财物等违反治安管理行为，情节较轻的，公安机关可以调解处理",
+                                "包括殴打他人、故意伤害、侮辱、诽谤、诬告陷害、故意损毁财物、干扰他人正常生活、侵犯隐私、非法侵入住宅等行为"
+                            ],
+                            "不适用情形": [
+                                "①雇凶伤害他人的",
+                                "②结伙斗殴或者其他寻衅滋事的",
+                                "③多次实施违反治安管理行为的",
+                                "④当事人明确表示不愿意调解处理的",
+                                "⑤当事人在治安调解过程中又针对对方实施违反治安管理行为的",
+                                "⑥调解过程中，违法嫌疑人逃跑的",
+                                "⑦其他不宜调解处理的"
+                            ],
+                            "当场调解": [
+                                "对情节轻微、事实清楚、因果关系明确，不涉及医疗费用、物品损失或者双方当事人对医疗费用和物品损失的赔付无争议，符合治安调解条件，双方当事人同意当场调解并当场履行的治安案件，可以当场调解",
+                                "并制作调解协议书",
+                                "当事人基本情况、主要违法事实和协议内容在现场录音录像中明确记录的，不再制作调解协议书"
+                            ],
+                            "调解原则": [
+                                "应当查明事实，收集证据",
+                                "遵循合法、公正、自愿、及时的原则",
+                                "注重教育和疏导"
+                            ],
+                            "调解结果": [
+                                "经公安机关调解，当事人达成协议的，不予处罚",
+                                "经调解未达成协议或者达成协议后不履行的，公安机关应当依照本法的规定对违反治安管理行为人给予处罚",
+                                "并告知当事人可以就民事争议依法向人民法院提起民事诉讼"
+                            ]
+                        },
+                        related: ["民事调解", "人民调解"]
+                    },
+                    "执行": {
+                        content: {
+                            "罚款执行一般情况": [
+                                "罚缴分离",
+                                "被处罚人应当自收到处罚决定书之日起15日内，到指定的银行缴纳罚款"
+                            ],
+                            "罚款当场收缴适用范围": [
+                                "①被处50元以下罚款，被处罚人对罚款无异议的",
+                                "②在边远、水上、交通不便地区，公安机关及其人民警察依照本法的规定作出罚款决定后，被处罚人向指定的银行缴纳罚款确有困难，经被处罚人提出的",
+                                "③被处罚人在当地没有固定住所，不当场收缴事后难以执行的"
+                            ],
+                            "当场收缴罚款要求": [
+                                "应当向被处罚人出具省、自治区、直辖市人民政府财政部门统一制发的罚款收据",
+                                "不出具统一罚款收据的，被处罚人有权拒绝缴纳罚款",
+                                "人民警察当场收缴的罚款，应当自收缴罚款之日起2日内，交至所属的公安机关",
+                                "在水上、旅客列车上当场收缴的罚款，应当自抵岸或者到站之日起2日内，交至所属的公安机关",
+                                "公安机关应当自收到罚款之日起2日内将罚款缴付指定的银行"
+                            ],
+                            "强制执行": [
+                                "对被处罚人无正当理由逾期不缴纳罚款的，作出处罚决定的公安机关可以采取下列措施：",
+                                "①将依法查封、扣押的财物拍卖",
+                                "②每日按罚款数额的3%加处罚款",
+                                "③申请人民法院强制执行"
+                            ],
+                            "行政拘留执行地点及期限": [
+                                "由作出决定的公安机关送达拘留所执行",
+                                "有多种违法行为的应当分别处罚，但合并执行",
+                                "合并执行的拘留不得超过20天"
+                            ],
+                            "不执行行政拘留": [
+                                "①已满14周岁不满16周岁的",
+                                "②已满16周岁不满18周岁，初次违反治安管理的",
+                                "③70周岁以上的",
+                                "④怀孕或者哺乳自己不满1周岁婴儿的"
+                            ],
+                            "暂缓执行行政拘留": [
+                                "被处罚人不服行政拘留处罚决定，申请行政复议、提起行政诉讼的，可以向公安机关提出暂缓执行行政拘留的申请",
+                                "公安机关认为暂缓执行行政拘留不致发生社会危险的，由被处罚人或者其近亲属提出符合条件的担保人，或者按每日行政拘留200元的标准交纳保证金，行政拘留的处罚决定暂缓执行"
+                            ],
+                            "担保人条件": [
+                                "①与本案无牵连",
+                                "②享有政治权利，人身自由未受到限制",
+                                "③在当地有常住户口和固定住所",
+                                "④有能力履行担保义务"
+                            ]
+                        },
+                        related: ["行政处罚执行", "刑罚执行"]
+                    }
+                }
+            },
+            "行政法与行政诉讼法": {
+                color: "#f57c00",
+                chapters: {
+                    "行政法基本原则": {
+                        content: {
+                            "六项原则": ["合法行政、合理行政、程序正当、高效便民、诚实守信、权责统一"]
+                        }
+                    },
+                    "行政行为": {
+                        content: {
+                            "行政许可": ["准予从事特定活动的资格"],
+                            "行政处罚": ["警告、罚款、没收、责令停产停业、暂扣吊销证照、行政拘留等7种"],
+                            "行政强制": ["强制措施（查封扣押冻结限制人身自由）、强制执行（代履行、执行罚、直接强制）"],
+                            "行政确认": ["确定法律地位、权利义务关系"]
+                        },
+                        related: ["行政处罚种类"]
+                    },
+                    "行政诉讼": {
+                        content: {
+                            "受案范围": ["对行政处罚、强制、许可等12类行为不服可提起诉讼"],
+                            "不受理": ["国防外交、抽象行政行为、内部行为、法定终局裁决、刑事司法行为"],
+                            "管辖": ["被告所在地或原告所在地（限制人身自由类）"],
+                            "级别管辖": ["基层法院第一审，中级管辖县级以上政府和海关案件"]
+                        },
+                        related: ["行政管辖", "刑事管辖"]
+                    },
+                    "行政赔偿": {
+                        content: {
+                            "赔偿范围": ["侵犯人身权（违法拘留、非法剥夺限制人身自由、违法使用武器警械等）、侵犯财产权（违法处罚、强制、征收征用等）"],
+                            "赔偿方式": ["支付赔偿金为主，能返还财产或恢复原状的予以返还恢复"],
+                            "侵犯人身自由": ["每日赔偿金按国家上年度职工日平均工资计算"]
+                        }
+                    }
+                }
+            },
+            "公安机关办理刑事案件程序": {
+                color: "#d32f2f",
+                chapters: {
+                    "管辖与受案": {
+                        content: {
+                            "地域管辖": [
+                                "犯罪地（犯罪行为地和犯罪结果地）管辖",
+                                "由最初受理的公安机关管辖，必要时可由主要犯罪地管辖"
+                            ],
+                            "级别管辖": [
+                                "县级以上公安机关办理刑事案件",
+                                "重大复杂案件可由上级公安机关管辖"
+                            ],
+                            "受案": [
+                                "接受案件后应立即审查，符合立案条件的应立案侦查",
+                                "不符合立案条件的应说明理由"
+                            ]
+                        },
+                        related: ["行政案件管辖", "治安管理管辖"]
+                    },
+                    "证据": {
+                        content: {
+                            "8种证据": [
+                                "①物证",
+                                "②书证",
+                                "③证人证言",
+                                "④被害人陈述",
+                                "⑤犯罪嫌疑人、被告人供述和辩解",
+                                "⑥鉴定意见",
+                                "⑦勘验、检查、辨认、侦查实验等笔录",
+                                "⑧视听资料、电子数据"
+                            ],
+                            "证据标准": [
+                                "定罪量刑的事实都有证据证明",
+                                "据以定案的证据均经法定程序查证属实",
+                                "综合全案证据，对所认定事实已排除合理怀疑"
+                            ],
+                            "非法证据排除": [
+                                "采用刑讯逼供等非法方法收集的言词证据应依法排除",
+                                "经县级以上公安机关负责人批准，应当排除"
+                            ]
+                        },
+                        related: ["行政证据", "民事证据"]
+                    },
+                    "鉴定": {
+                        content: {
+                            "鉴定启动": [
+                                "经县级以上公安机关负责人批准",
+                                "应当指派或聘请具有专门知识的人进行"
+                            ],
+                            "重新鉴定（6种情形）": [
+                                "①鉴定程序违法的",
+                                "②鉴定人不具备鉴定资格的",
+                                "③鉴定意见明显依据不足的",
+                                "④鉴定人故意作虚假鉴定的",
+                                "⑤送检材料虚假或者被损坏的",
+                                "⑥其他应当重新鉴定的"
+                            ],
+                            "鉴定人": [
+                                "重新鉴定应另行指派或聘请鉴定人"
+                            ]
+                        },
+                        related: ["司法鉴定", "技术侦查"]
+                    },
+                    "强制措施": {
+                        content: {
+                            "拘留": [
+                                "拘留期限：一般3日，特殊情况可延长1-4日，重大嫌疑分子可延长至30日",
+                                "拘留后24小时内通知家属，有碍侦查的除外"
+                            ],
+                            "取保候审": [
+                                "可能判处管制、拘役、独立适用附加刑的",
+                                "可能判处有期徒刑以上刑罚，采取取保候审不致发生社会危险性的",
+                                "患有严重疾病、生活不能自理，怀孕或正在哺乳自己婴儿的妇女，采取取保候审不致发生社会危险性的",
+                                "最长不得超过12个月"
+                            ],
+                            "监视居住": [
+                                "应在犯罪嫌疑人、被告人的住处执行",
+                                "无固定住处的，可在指定的居所执行",
+                                "最长不得超过6个月"
+                            ],
+                            "逮捕": [
+                                "有证据证明有犯罪事实",
+                                "可能判处徒刑以上刑罚",
+                                "采取取保候审尚不足以防止发生社会危险性",
+                                "经县级以上公安机关负责人批准后提请人民检察院审查批准"
+                            ]
+                        },
+                        related: ["行政强制措施", "强制传唤"]
+                    },
+                    "未成年人刑事案件诉讼程序": {
+                        content: {
+                            "特殊保护原则": [
+                                "教育、感化、挽救方针",
+                                "教育为主、惩罚为辅原则",
+                                "严格限制和减少逮捕措施"
+                            ],
+                            "法定代理人到场": [
+                                "讯问、询问未成年犯罪嫌疑人，应当通知其法定代理人到场",
+                                "无法通知或法定代理人是共犯的，可通知其他成年亲属、所在学校或单位、居住地基层组织、未保组织代表到场"
+                            ],
+                            "女性工作人员在场": [
+                                "讯问女性未成年犯罪嫌疑人，应当有女性工作人员在场"
+                            ],
+                            "犯罪记录封存": [
+                                "犯罪时不满18周岁，被判处5年有期徒刑以下刑罚的，应当对相关犯罪记录予以封存"
+                            ]
+                        },
+                        related: ["未成年人保护", "合适成年人到场"]
+                    },
+                    "侦查": {
+                        content: {
+                            "讯问犯罪嫌疑人": [
+                                "讯问时应告知诉讼权利和如实供述可从宽处理的法律规定",
+                                "拘留后应在24小时内讯问",
+                                "严禁刑讯逼供和以威胁、引诱、欺骗等非法方法收集证据"
+                            ],
+                            "询问证人": [
+                                "询问证人应个别进行",
+                                "询问不满18周岁的证人，可通知其法定代理人到场"
+                            ],
+                            "搜查": [
+                                "经县级以上公安机关负责人批准",
+                                "执行搜查应向被搜查人出示搜查证",
+                                "搜查妇女身体应由女性工作人员进行"
+                            ],
+                            "扣押": [
+                                "对与案件有关的物品和文件应妥善保管",
+                                "对与案件无关的物品、文件，不得扣押",
+                                "应当开列清单，由在场人员和物品持有人签名"
+                            ]
+                        },
+                        related: ["侦查权", "强制措施"]
+                    },
+                    "办案期限": {
+                        content: {
+                            "侦查羁押期限": [
+                                "逮捕后侦查羁押期限不得超过2个月",
+                                "案情复杂、期限届满不能终结的案件，经上一级人民检察院批准，可以延长1个月",
+                                "特殊情况：交通不便地区、重大复杂案件、犯罪集团案件、流窜作案案件，可延长2个月",
+                                "对犯罪嫌疑人可能判处10年以上有期徒刑，延长期限届满仍不能终结的，可再延长2个月"
+                            ],
+                            "补充侦查期限": [
+                                "对退回补充侦查的案件，应在1个月内补充侦查完毕",
+                                "补充侦查以2次为限"
+                            ]
+                        },
+                        related: ["办案期限", "审查起诉期限"]
+                    }
+                }
+            },
+            "道路交通安全法": {
+                color: "#00796b",
+                chapters: {
+                    "总则概述": {
+                        content: {
+                            "立法目的": [
+                                "维护道路交通秩序",
+                                "预防和减少交通事故",
+                                "保护人身安全",
+                                "保护公民、法人和其他组织的财产安全及其他合法权益",
+                                "提高通行效率"
+                            ],
+                            "适用范围": [
+                                "境内的车辆驾驶人、行人、乘车人",
+                                "与道路交通活动有关的单位和个人"
+                            ],
+                            "主管机关": [
+                                "国务院公安部门负责全国道路交通安全管理工作",
+                                "县级以上地方公安机关交通管理部门负责本行政区域内工作"
+                            ],
+                            "基本原则": [
+                                "依法管理、方便群众",
+                                "保障道路交通有序、安全、畅通",
+                                "交通警察应模范遵守道路交通安全法律法规"
+                            ]
+                        },
+                        related: ["立法目的", "管辖制度"]
+                    },
+                    "车辆和驾驶人": {
+                        content: {
+                            "机动车登记制度": [
+                                "国家对机动车实行登记制度",
+                                "登记后方可上道路行驶",
+                                "尚未登记需临时上路的，应取得临时通行牌证",
+                                "登记分类：注册登记、变更登记、转移登记、抵押登记、注销登记"
+                            ],
+                            "机动车登记材料": [
+                                "①机动车所有人的身份证明",
+                                "②机动车来历证明",
+                                "③机动车整车出厂合格证明或进口凭证",
+                                "④车辆购置税的完税证明或免税凭证",
+                                "⑤法律、行政法规规定应提交的其他证明、凭证"
+                            ],
+                            "机动车登记时限": [
+                                "公安机关交通管理部门自受理申请之日起5个工作日内完成审查",
+                                "符合条件的发放机动车登记证书、号牌和行驶证",
+                                "不符合条件的向申请人说明不予登记的理由"
+                            ],
+                            "机动车安全技术检验": [
+                                "对符合国家安全技术标准的发给检验合格标志",
+                                "实行社会化的地方，任何单位不得要求到指定场所检验",
+                                "公安机关、检验机构不得要求到指定场所维修保养"
+                            ],
+                            "机动车号牌行驶证要求": [
+                                "应悬挂机动车号牌，放置检验合格标志、保险标志",
+                                "随车携带机动车行驶证",
+                                "号牌应按规定悬挂并保持清晰完整，不得故意遮挡、污损",
+                                "任何单位和个人不得收缴、扣留机动车号牌",
+                                "检验合格标志、保险标志应粘贴在机动车前窗右上角"
+                            ],
+                            "第三者责任强制险": [
+                                "国家实行机动车第三者责任强制保险制度",
+                                "设立道路交通事故社会救助基金"
+                            ],
+                            "驾驶证制度": [
+                                "应符合国务院公安部门规定的驾驶许可条件",
+                                "经考试合格后，由公安机关交通管理部门发给相应类别驾驶证",
+                                "驾驶证有效期为6年",
+                                "初次申领后的12个月为实习期",
+                                "实习期内驾驶应在车身后部粘贴或悬挂统一式样的实习标志"
+                            ],
+                            "驾驶培训管理": [
+                                "机动车驾驶培训实行社会化",
+                                "交通运输主管部门对驾驶培训学校、培训班实行备案管理",
+                                "专门的拖拉机驾驶培训由农业（农业机械）主管部门监督管理",
+                                "任何国家机关以及驾驶培训和考试主管部门不得举办或参与举办驾驶培训学校、培训班"
+                            ],
+                            "累积记分制度": [
+                                "对违反道路交通安全法律法规的行为实行累积记分制度",
+                                "记分周期为12个月，满分为12分",
+                                "从机动车驾驶证初次领取之日起计算",
+                                "一个记分周期内记分达到12分的，扣留驾驶证",
+                                "驾驶人应参加道路交通安全法律法规学习并接受考试",
+                                "考试合格的记分予以清除，发还驾驶证；考试不合格的继续参加学习和考试"
+                            ]
+                        },
+                        related: ["行政许可", "登记制度"]
+                    },
+                    "道路通行规定": {
+                        content: {
+                            "一般通行规定": [
+                                "机动车、非机动车实行右侧通行",
+                                "道路划分为机动车道、非机动车道、人行道的，实行分道通行",
+                                "未划分的，机动车在道路中间通行，非机动车和行人在道路两侧通行",
+                                "专用车道内只准许规定的车辆通行",
+                                "车辆、行人应按交通信号通行",
+                                "遇有交通警察现场指挥时，应按交通警察指挥通行",
+                                "没有交通信号的道路上，应在确保安全、畅通的原则下通行"
+                            ],
+                            "机动车通行规定": [
+                                "不得超过限速标志标明的最高时速",
+                                "没有限速标志的路段应保持安全车速",
+                                "同车道行驶的机动车，后车应与前车保持足以采取紧急制动措施的安全距离",
+                                "通过交叉路口应按交通信号灯、标志、标线或交通警察指挥通过",
+                                "通过没有交通信号的交叉路口时应减速慢行，让行人和优先通行车辆先行",
+                                "遇前方车辆停车排队等候或缓慢行驶时，不得借道超车或占用对面车道，不得穿插等候车辆",
+                                "行经人行横道时应减速行驶；遇行人正在通过应停车让行",
+                                "行经没有交通信号的道路时，遇行人横过道路应当避让"
+                            ],
+                            "不得超车的情形": [
+                                "①前车正在左转弯、掉头、超车的",
+                                "②与对面来车有会车可能的",
+                                "③前车为执行紧急任务的警车、消防车、救护车、工程救险车的",
+                                "④行经铁路道口、交叉路口、窄桥、弯道、陡坡、隧道、人行横道、市区交通流量大的路段等没有超车条件的"
+                            ],
+                            "机动车故障处置": [
+                                "需停车排除故障时，驾驶人应立即开启危险报警闪光灯",
+                                "将机动车移至不妨碍交通的地方停放",
+                                "难以移动的，应持续开启危险报警闪光灯",
+                                "在来车方向设置警告标志等措施扩大示警距离",
+                                "必要时迅速报警"
+                            ],
+                            "特殊车辆优先权": [
+                                "警车、消防车、救护车、工程救险车执行紧急任务时可使用警报器、标志灯具",
+                                "在确保安全前提下，不受行驶路线、方向、速度和信号灯限制",
+                                "其他车辆和行人应当让行",
+                                "非执行紧急任务时，不得使用警报器、标志灯具，不享有道路优先通行权"
+                            ],
+                            "行人通行规定": [
+                                "行人应在人行道内行走，没有人行道的靠路边行走",
+                                "通过路口或横过道路应走人行横道或过街设施",
+                                "通过有交通信号灯的人行横道应按信号灯指示通行",
+                                "通过没有交通信号灯、人行横道的路口，或没有过街设施的路段横过道路，应在确认安全后通过",
+                                "行人不得跨越、倚坐道路隔离设施",
+                                "不得扒车、强行拦车或实施妨碍道路交通安全的其他行为",
+                                "学龄前儿童以及不能辨认或不能控制自己行为的精神疾病患者、智力障碍者在道路上通行，应由监护人、监护人委托的人或对其负有管理保护职责的人带领",
+                                "盲人在道路上通行应使用盲杖或采取其他导盲手段，车辆应当避让盲人",
+                                "行人通过铁路道口时应按交通信号或管理人员指挥通行；没有交通信号和管理人员的，应在确认无火车驶临后迅速通过"
+                            ],
+                            "乘车人规定": [
+                                "不得携带易燃易爆等危险物品",
+                                "不得向车外抛洒物品",
+                                "不得有影响驾驶人安全驾驶的行为"
+                            ],
+                            "高速公路特别规定": [
+                                "行人、非机动车、拖拉机、轮式专用机械车、铰接式客车、全挂拖斗车以及其他设计最高时速低于70公里的机动车不得进入",
+                                "高速公路限速标志标明的最高时速不得超过120公里（最低时速60公里）",
+                                "机动车在高速公路上发生故障时，警告标志应设置在故障车来车方向150米以外",
+                                "车上人员应迅速转移到右侧路肩上或应急车道内，并迅速报警",
+                                "任何单位、个人不得在高速公路上拦截检查行驶的车辆（公安机关人民警察依法执行紧急公务除外）"
+                            ]
+                        },
+                        related: ["通行规则", "特殊情形处理"]
+                    },
+                    "交通事故处理与法律责任": {
+                        content: {
+                            "交通事故现场处置": [
+                                "在道路上发生交通事故，车辆驾驶人应当立即停车，保护现场"
+                            ],
+                            "造成人身伤亡的处理": [
+                                "车辆驾驶人应立即抢救受伤人员",
+                                "迅速报告执勤的交通警察或公安机关交通管理部门",
+                                "因抢救受伤人员变动现场的，应当标明位置",
+                                "乘车人、过往车辆驾驶人、过往行人应当予以协助"
+                            ],
+                            "未造成人身伤亡的处理": [
+                                "当事人对事实及成因无争议的，可即行撤离现场，恢复交通，自行协商处理损害赔偿事宜",
+                                "不即行撤离现场的，应迅速报告执勤的交通警察或公安机关交通管理部门"
+                            ],
+                            "仅造成轻微财产损失的处理": [
+                                "基本事实清楚的，当事人应先撤离现场再进行协商处理"
+                            ],
+                            "交通事故逃逸": [
+                                "车辆发生交通事故后逃逸的，事故现场目击人员和其他知情人员应向公安机关交通管理部门或交通警察举报",
+                                "举报属实的，公安机关交通管理部门应给予奖励",
+                                "发生交通事故后当事人逃逸的，逃逸的当事人承担全部责任",
+                                "有证据证明对方当事人也有过错的，可以减轻责任",
+                                "当事人故意破坏、伪造现场、毁灭证据的，承担全部责任"
+                            ],
+                            "处罚主体和种类": [
+                                "公安机关交通管理部门及其交通警察对道路交通安全违法行为应及时纠正",
+                                "处罚种类包括：警告、罚款、暂扣或者吊销机动车驾驶证、拘留"
+                            ],
+                            "饮酒驾驶处罚": [
+                                "饮酒后驾驶机动车的：暂扣6个月机动车驾驶证，并处1000元以上2000元以下罚款",
+                                "因饮酒后驾驶机动车被处罚，再次饮酒后驾驶机动车的：10日以下拘留，并处1000元以上2000元以下罚款，吊销机动车驾驶证",
+                                "饮酒后驾驶营运机动车的：15日拘留，并处5000元罚款，吊销机动车驾驶证，5年内不得重新取得机动车驾驶证"
+                            ],
+                            "醉酒驾驶处罚": [
+                                "醉酒驾驶机动车的：由公安机关交通管理部门约束至酒醒，吊销机动车驾驶证，依法追究刑事责任，5年内不得重新取得机动车驾驶证",
+                                "醉酒驾驶营运机动车的：由公安机关交通管理部门约束至酒醒，吊销机动车驾驶证，依法追究刑事责任，10年内不得重新取得机动车驾驶证，重新取得机动车驾驶证后不得驾驶营运机动车",
+                                "饮酒后或醉酒驾驶机动车发生重大交通事故构成犯罪的：依法追究刑事责任，并由公安机关交通管理部门吊销机动车驾驶证，终生不得重新取得机动车驾驶证"
+                            ]
+                        },
+                        related: ["危险驾驶罪", "刑事处罚", "行政处罚"]
+                    }
+                }
+            }
+        };
+
+        // 知识点横向对比数据
+        const comparisonData = {
+            "管辖": {
+                title: "管辖制度横向对比",
+                items: [
+                    {
+                        name: "行政案件管辖",
+                        category: "admin",
+                        content: "违法行为地管辖（违法行为发生地和结果发生地）。特殊规定：涉及卖淫、嫖娼、赌博、毒品的案件不适用居住地管辖。"
+                    },
+                    {
+                        name: "刑事案件管辖",
+                        category: "criminal",
+                        content: "犯罪地管辖（犯罪行为地和结果地）。几个公安机关都有权管辖的，由最初受理的管辖，必要时可由主要犯罪地管辖。"
+                    },
+                    {
+                        name: "行政诉讼管辖",
+                        category: "admin",
+                        content: "被告所在地法院管辖，经复议也可由复议机关所在地管辖。限制人身自由的案件，由被告所在地或原告所在地法院管辖。"
+                    }
+                ],
+                summary: "相同点：都遵循'行为地优先'原则。不同点：行政案件对'黄赌毒'有特殊限制；刑事案件采用'最初受理'原则；行政诉讼则以被告所在地为主。"
+            },
+            "证据": {
+                title: "证据制度横向对比",
+                items: [
+                    {
+                        name: "行政案件证据",
+                        category: "admin",
+                        content: "8种证据类型（物证、书证、证人证言、被害人陈述、违法嫌疑人陈述和申辩、鉴定意见、勘验检查笔录、视听资料和电子数据）。证据标准：案件事实清楚，证据确实充分。"
+                    },
+                    {
+                        name: "刑事案件证据",
+                        category: "criminal",
+                        content: "8种证据类型（与行政完全一致）。证据标准：证据确实、充分，据以定案的证据均经法定程序查证属实，综合全案证据排除合理怀疑。"
+                    },
+                    {
+                        name: "民事案件证据",
+                        category: "civil",
+                        content: "8种证据类型（当事人陈述、书证、物证、视听资料、电子数据、证人证言、鉴定意见、勘验笔录）。证据标准：高度盖然性，优势证据规则。"
+                    }
+                ],
+                summary: "相同点：证据种类基本一致（都是8种），都强调证据的合法性。不同点：证据标准严格程度不同，刑事最高（排除合理怀疑）＞行政（证据确实充分）＞民事（高度盖然性）。"
+            },
+            "回避": {
+                title: "回避制度横向对比",
+                items: [
+                    {
+                        name: "行政案件回避",
+                        category: "admin",
+                        content: "3种情形：①本案当事人或近亲属 ②本人或近亲属与本案有利害关系 ③与当事人有其他关系可能影响公正。3种方式：自行回避、申请回避、指令回避。"
+                    },
+                    {
+                        name: "刑事案件回避",
+                        category: "criminal",
+                        content: "回避情形、回避方式、决定机关与行政案件完全一致，体现了程序公正的统一要求。"
+                    }
+                ],
+                summary: "相同点：行政和刑事案件的回避制度几乎完全一致。不同点：无实质性差异，都强调程序公正。"
+            },
+            "传唤": {
+                title: "传唤/询问制度横向对比",
+                items: [
+                    {
+                        name: "治安管理处罚",
+                        category: "security",
+                        content: "传唤方式：书面传唤（经批准）、口头传唤（现场出示工作证）、强制传唤。询问时间：一般不超过8小时，情况复杂可能适用行拘的不超过24小时。"
+                    },
+                    {
+                        name: "行政案件程序",
+                        category: "admin",
+                        content: "传唤方式与治安处罚一致。询问时间：一般不超过8小时，复杂可能行拘不超过24小时。特殊对象：不满16周岁通知监护人、聋哑人配备手语等。"
+                    },
+                    {
+                        name: "刑事案件程序",
+                        category: "criminal",
+                        content: "传唤、拘传持续时间不超过12小时，案件特别重大复杂需要拘留逮捕的不超过24小时。不得以连续传唤拘传变相拘禁。"
+                    }
+                ],
+                summary: "相同点：都有时间限制，都禁止变相拘禁。不同点：行政案件最长24小时，刑事案件根据案件性质区分12/24小时；对特殊人群的保护要求，刑事程序更严格。"
+            },
+            "处罚": {
+                title: "处罚种类横向对比",
+                items: [
+                    {
+                        name: "治安管理处罚",
+                        category: "security",
+                        content: "4种：警告、罚款（200元以下~3000元）、行政拘留（1~15日，合并最长20日）、吊销公安机关发放的许可证。"
+                    },
+                    {
+                        name: "行政处罚",
+                        category: "admin",
+                        content: "7种：警告、罚款、没收违法所得和非法财物、责令停产停业、暂扣或吊销许可证和执照、行政拘留、法律法规规定的其他处罚。"
+                    },
+                    {
+                        name: "刑事处罚",
+                        category: "criminal",
+                        content: "主刑5种：管制、拘役、有期徒刑、无期徒刑、死刑。附加刑3种：罚金、剥夺政治权利、没收财产。"
+                    }
+                ],
+                summary: "相同点：都对精神病人、未成年人有特殊规定。不同点：严重程度递增（治安＜行政＜刑事），种类复杂程度递增（治安4种＜行政7种＜刑事8种）。"
+            },
+            "未成年人": {
+                title: "未成年人保护横向对比",
+                items: [
+                    {
+                        name: "治安管理处罚",
+                        category: "security",
+                        content: "不满14周岁不予处罚。已满14不满18从轻减轻。不执行行拘：已满14不满16周岁、已满16不满18初次违法。询问不满16周岁应通知监护人到场。"
+                    },
+                    {
+                        name: "刑事案件程序",
+                        category: "criminal",
+                        content: "完全无责任：不满12周岁。相对责任：已满12不满14（特定犯罪需最高检核准）、已满14不满16（8种严重犯罪）。减轻责任：已满14不满18。特殊保护：通知法定代理人到场、女工作人员在场、严格限制逮捕、记录封存（5年以下刑罚）。"
+                    },
+                    {
+                        name: "民事法律",
+                        category: "civil",
+                        content: "无民事行为能力：不满8周岁。限制民事行为能力：已满8不满18周岁。完全民事行为能力：已满18周岁或16周岁以上以劳动收入为主要生活来源。"
+                    }
+                ],
+                summary: "相同点：都强调对未成年人的特殊保护。不同点：年龄界限不同（民事8岁、治安14岁、刑事12/14/16岁分层）；刑事程序保护最全面（记录封存、强制法援等）。"
+            },
+            "执行": {
+                title: "执行程序横向对比",
+                items: [
+                    {
+                        name: "治安处罚执行",
+                        category: "security",
+                        content: "罚款：罚缴分离，当场收缴（50元以下无异议、边远地区困难、无固定住所），2日内上交。行拘：送拘留所，合并不超过20日。暂缓执行：提供担保人或按日200元保证金。"
+                    },
+                    {
+                        name: "行政处罚执行",
+                        category: "admin",
+                        content: "罚款：罚缴分离，当场收缴（个人20元以下、单位1000元以下）。强制执行：到期不缴每日加处3%、查封拍卖财物、申请法院强制执行。"
+                    },
+                    {
+                        name: "刑罚执行",
+                        category: "criminal",
+                        content: "罚金：判决指定期限缴纳，期满不缴强制缴纳。拘役：就近执行1月~6月。有期徒刑：监狱或其他场所6月~15年。缓刑：设定考验期不关押。减刑假释：需法院裁定。"
+                    }
+                ],
+                summary: "相同点：都强调依法执行，保障当事人权利。不同点：罚款当场收缴标准不同（治安50元、行政个人20元）；拘留时长不同（行拘最长20日、拘役最长6月）；刑事执行监督最严格。"
+            }
+        };
+
+        let treeChart = null;
+        let mindmapChart = null;
+        let currentLaw = null;
+        let currentChapter = null;
+
+        // 初始化
+        window.onload = function() {
+            renderMenu();
+            initCharts();
+        };
+
+        // 渲染菜单
+        function renderMenu() {
+            const menuArea = document.getElementById('menuArea');
+            let html = '';
+
+            for (let lawName in knowledgeSystem) {
+                const law = knowledgeSystem[lawName];
+                html += `
+                    <div class="law-module">
+                        <div class="module-title" onclick="toggleModule(this, '${lawName}')">
+                            <span>${lawName}</span>
+                            <span class="icon">▶</span>
+                        </div>
+                        <div class="chapter-list">
+                `;
+
+                for (let chapterName in law.chapters) {
+                    const chapter = law.chapters[chapterName];
+                    const hasRelated = chapter.related && chapter.related.length > 0;
+                    html += `
+                        <div class="chapter-item" onclick="showKnowledge('${lawName}', '${chapterName}')">
+                            ${chapterName}
+                            ${hasRelated ? '<span class="related-tag">🔗关联</span>' : ''}
+                        </div>
+                    `;
+                }
+
+                html += `
+                        </div>
+                    </div>
+                `;
+            }
+
+            menuArea.innerHTML = html;
+        }
+
+        // 切换模块展开/折叠
+        function toggleModule(element, lawName) {
+            const chapterList = element.nextElementSibling;
+            const isShow = chapterList.classList.contains('show');
+            
+            if (isShow) {
+                chapterList.classList.remove('show');
+                element.classList.remove('active');
+            } else {
+                chapterList.classList.add('show');
+                element.classList.add('active');
+            }
+        }
+
+        // 显示知识点详情
+        function showKnowledge(lawName, chapterName) {
+            currentLaw = lawName;
+            currentChapter = chapterName;
+
+            // 更新菜单选中状态
+            document.querySelectorAll('.chapter-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+
+            // 切换到详细内容视图
+            switchTab('detail');
+
+            // 滚动到内容区域顶部
+            const detailView = document.getElementById('detailView');
+            if (detailView) {
+                detailView.scrollTop = 0;
+            }
+
+            const law = knowledgeSystem[lawName];
+            const chapter = law.chapters[chapterName];
+            
+            let html = `
+                <div class="detail-header">
+                    <h2>${chapterName}</h2>
+                    <div class="breadcrumb">${lawName} / ${chapterName}</div>
+                </div>
+            `;
+
+            // 基本内容
+            html += `<div class="content-section" id="基本内容">`;
+            html += `<div class="section-title">📋 基本内容</div>`;
+            
+            for (let key in chapter.content) {
+                html += `<div class="content-box">`;
+                html += `<strong style="color: #667eea; font-size: 16px;">${key}</strong>`;
+                html += `<ul>`;
+                if (Array.isArray(chapter.content[key])) {
+                    chapter.content[key].forEach(item => {
+                        html += `<li>${item}</li>`;
+                    });
+                } else {
+                    html += `<li>${chapter.content[key]}</li>`;
+                }
+                html += `</ul></div>`;
+            }
+            html += `</div>`;
+
+            // 横向对比
+            if (chapter.related && chapter.related.length > 0) {
+                html += `<div class="content-section" id="横向对比">`;
+                
+                // 查找相关的对比数据
+                let comparisonFound = false;
+                for (let relatedTopic of chapter.related) {
+                    if (comparisonData[relatedTopic] || comparisonData[chapterName]) {
+                        const comparison = comparisonData[relatedTopic] || comparisonData[chapterName];
+                        comparisonFound = true;
+                        
+                        html += `
+                            <div class="comparison-section">
+                                <div class="comparison-title">${comparison.title}</div>
+                                <div class="comparison-grid">
+                        `;
+                        
+                        comparison.items.forEach(item => {
+                            html += `
+                                <div class="comparison-card card-${item.category}">
+                                    <h4>${item.name}</h4>
+                                    <p>${item.content}</p>
+                                </div>
+                            `;
+                        });
+                        
+                        html += `</div>`;
+                        
+                        if (comparison.summary) {
+                            html += `
+                                <div class="highlight-box" style="margin-top: 20px;">
+                                    <strong>💡 核心差异总结</strong>
+                                    <p style="margin-top: 10px; line-height: 1.8;">${comparison.summary}</p>
+                                </div>
+                            `;
+                        }
+                        
+                        html += `</div>`;
+                    }
+                }
+                
+                if (!comparisonFound) {
+                    html += `
+                        <div class="highlight-box">
+                            <strong>🔗 相关知识点</strong>
+                            <p style="margin-top: 10px;">本知识点与以下内容相关：${chapter.related.join('、')}</p>
+                        </div>
+                    `;
+                }
+                
+                html += `</div>`;
+            }
+
+            // 相关延伸
+            html += `
+                <div class="content-section" id="相关延伸">
+                    <div class="section-title">🌟 相关延伸</div>
+                    <div class="highlight-box">
+                        <strong>学习建议</strong>
+                        <p style="margin-top: 10px; line-height: 1.8;">
+                            • 点击左侧菜单中带有 <span class="related-tag">🔗关联</span> 标签的其他知识点，可以查看更多横向对比<br>
+                            • 切换到"树状图"或"思维导图"视图，直观了解知识体系结构<br>
+                            • 使用搜索功能快速定位相关知识点
+                        </p>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('detailView').innerHTML = html;
+        }
+
+        // 初始化图表
+        function initCharts() {
+            treeChart = echarts.init(document.getElementById('treeChart'));
+            mindmapChart = echarts.init(document.getElementById('mindmapChart'));
+            
+            renderTreeChart();
+            renderMindmap();
+        }
+
+        // 渲染树状图
+        function renderTreeChart() {
+            const data = {
+                name: "法律知识体系",
+                children: []
+            };
+
+            for (let lawName in knowledgeSystem) {
+                const law = knowledgeSystem[lawName];
+                const lawNode = {
+                    name: lawName,
+                    itemStyle: { color: law.color },
+                    children: []
+                };
+
+                for (let chapterName in law.chapters) {
+                    const chapter = law.chapters[chapterName];
+                    const chapterNode = {
+                        name: chapterName,
+                        itemStyle: { color: law.color, opacity: 0.8 }
+                    };
+                    
+                    // 如果有关联，添加标记
+                    if (chapter.related && chapter.related.length > 0) {
+                        chapterNode.name += " 🔗";
+                    }
+                    
+                    lawNode.children.push(chapterNode);
+                }
+
+                data.children.push(lawNode);
+            }
+
+            const option = {
+                tooltip: {
+                    trigger: 'item',
+                    triggerOn: 'mousemove'
+                },
+                series: [
+                    {
+                        type: 'tree',
+                        data: [data],
+                        top: '5%',
+                        left: '15%',
+                        bottom: '5%',
+                        right: '20%',
+                        symbolSize: 8,
+                        orient: 'LR',
+                        label: {
+                            position: 'left',
+                            verticalAlign: 'middle',
+                            align: 'right',
+                            fontSize: 13,
+                            color: '#333'
+                        },
+                        leaves: {
+                            label: {
+                                position: 'right',
+                                verticalAlign: 'middle',
+                                align: 'left'
+                            }
+                        },
+                        emphasis: {
+                            focus: 'descendant'
+                        },
+                        expandAndCollapse: true,
+                        animationDuration: 550,
+                        animationDurationUpdate: 750,
+                        lineStyle: {
+                            color: '#ccc',
+                            width: 1.5,
+                            curveness: 0.5
+                        }
+                    }
+                ]
+            };
+
+            treeChart.setOption(option);
+        }
+
+        // 渲染思维导图
+        function renderMindmap() {
+            const nodes = [];
+            const links = [];
+            let id = 0;
+
+            // 中心节点
+            nodes.push({
+                id: id++,
+                name: '法律知识体系',
+                symbolSize: 70,
+                x: 0,
+                y: 0,
+                itemStyle: { color: '#667eea' },
+                label: { fontSize: 16 }
+            });
+
+            const lawCount = Object.keys(knowledgeSystem).length;
+            let lawIndex = 0;
+
+            for (let lawName in knowledgeSystem) {
+                const law = knowledgeSystem[lawName];
+                const angle = (lawIndex / lawCount) * Math.PI * 2;
+                const radius = 300;
+                
+                const lawId = id++;
+                nodes.push({
+                    id: lawId,
+                    name: lawName,
+                    symbolSize: 50,
+                    x: Math.cos(angle) * radius,
+                    y: Math.sin(angle) * radius,
+                    itemStyle: { color: law.color },
+                    label: { fontSize: 14 }
+                });
+                links.push({ source: 0, target: lawId });
+
+                let chapterIndex = 0;
+                const chapterCount = Object.keys(law.chapters).length;
+                
+                for (let chapterName in law.chapters) {
+                    const chapterAngle = angle + ((chapterIndex / chapterCount) - 0.5) * 0.5;
+                    const chapterRadius = radius + 150;
+                    
+                    const chapterId = id++;
+                    nodes.push({
+                        id: chapterId,
+                        name: chapterName,
+                        symbolSize: 30,
+                        x: Math.cos(chapterAngle) * chapterRadius,
+                        y: Math.sin(chapterAngle) * chapterRadius,
+                        itemStyle: { color: law.color, opacity: 0.7 },
+                        label: { fontSize: 11 }
+                    });
+                    links.push({ source: lawId, target: chapterId });
+                    
+                    chapterIndex++;
+                }
+                
+                lawIndex++;
+            }
+
+            const option = {
+                tooltip: {},
+                series: [{
+                    type: 'graph',
+                    layout: 'none',
+                    data: nodes,
+                    links: links,
+                    roam: true,
+                    label: {
+                        show: true,
+                        position: 'right'
+                    },
+                    lineStyle: {
+                        color: 'source',
+                        curveness: 0.3,
+                        opacity: 0.5
+                    },
+                    emphasis: {
+                        focus: 'adjacency',
+                        lineStyle: { width: 3 }
+                    }
+                }]
+            };
+
+            mindmapChart.setOption(option);
+        }
+
+        // 切换标签页
+        function switchTab(tabName) {
+            // 更新按钮状态
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // 更新视图
+            document.querySelectorAll('.knowledge-detail, .chart-container').forEach(view => {
+                view.classList.remove('active');
+            });
+
+            if (tabName === 'detail') {
+                document.getElementById('detailView').classList.add('active');
+            } else if (tabName === 'tree') {
+                document.getElementById('treeChart').classList.add('active');
+                treeChart.resize();
+            } else if (tabName === 'mindmap') {
+                document.getElementById('mindmapChart').classList.add('active');
+                mindmapChart.resize();
+            }
+        }
+
+        // 搜索知识点
+        function searchKnowledge(keyword) {
+            if (!keyword.trim()) {
+                document.querySelectorAll('.chapter-item').forEach(item => {
+                    item.style.display = 'block';
+                    item.style.background = '';
+                });
+                return;
+            }
+
+            const lowerKeyword = keyword.toLowerCase();
+            document.querySelectorAll('.chapter-item').forEach(item => {
+                const text = item.textContent.toLowerCase();
+                if (text.includes(lowerKeyword)) {
+                    item.style.display = 'block';
+                    item.style.background = '#fff9c4';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        // 滚动到指定部分
+        function scrollToSection(sectionName) {
+            const section = document.getElementById(sectionName);
+            if (section) {
+                section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        // 窗口大小改变时重绘
+        window.addEventListener('resize', function() {
+            if (treeChart) treeChart.resize();
+            if (mindmapChart) mindmapChart.resize();
+        });
+    </script>
+</body>
+</html>
