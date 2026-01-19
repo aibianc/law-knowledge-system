@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>公式计算：a/(1+a) 展示</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .formula {
+            font-size: 1.5rem;
+            background-color: #e8f4fc;
+            padding: 10px 20px;
+            border-radius: 8px;
+            display: inline-block;
+            margin: 15px 0;
+            color: #2980b9;
+            font-weight: bold;
+        }
+        
+        .description {
+            color: #666;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 900px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .control-panel {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+        
+        .chart-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            height: 400px;
+        }
+        
+        .table-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            height: 400px;
+            overflow-y: auto;
+            grid-column: 1 / -1;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: center;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        th {
+            background-color: #f8f9fa;
+            position: sticky;
+            top: 0;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .control-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #444;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        .format-options {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .format-options label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: normal;
+        }
+        
+        .result-info {
+            background-color: #e8f6f3;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .highlight {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        .percent-example {
+            font-style: italic;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+        
+        @media (max-width: 600px) {
+            .controls {
+                flex-direction: column;
+            }
+            
+            .control-group {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>公式计算：a/(1+a)</h1>
+        <div class="formula">f(a) = a / (1 + a)</div>
+        <p class="description">本页面展示从0.001到1（0.1%到100%）的数值代入公式 a/(1+a) 的计算结果。您可以调整范围和步长查看不同数值对应的计算结果。</p>
+    </header>
+    
+    <div class="control-panel">
+        <div class="controls">
+            <div class="control-group">
+                <label for="startValue">起始值 (a):</label>
+                <input type="number" id="startValue" min="0.001" max="1" step="0.001" value="0.001">
+                <div class="percent-example">示例：0.001 = 0.1%</div>
+            </div>
+            
+            <div class="control-group">
+                <label for="endValue">结束值 (a):</label>
+                <input type="number" id="endValue" min="0.002" max="1" step="0.001" value="1">
+                <div class="percent-example">示例：1 = 100%</div>
+            </div>
+            
+            <div class="control-group">
+                <label for="step">步长:</label>
+                <select id="step">
+                    <option value="0.001">0.001 (精细)</option>
+                    <option value="0.005">0.005 (中等)</option>
+                    <option value="0.01">0.01 (粗略)</option>
+                    <option value="0.05">0.05 (很粗略)</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="format-options">
+            <label><input type="radio" name="format" value="percent" checked> 显示为百分比</label>
+            <label><input type="radio" name="format" value="decimal"> 显示为小数</label>
+            <label><input type="radio" name="format" value="fraction"> 显示为分数</label>
+        </div>
+        
+        <button id="calculateBtn">计算并刷新图表</button>
+    </div>
+    
+    <div class="container">
+        <div class="chart-container">
+            <canvas id="resultChart"></canvas>
+        </div>
+        
+        <div class="chart-container">
+            <canvas id="comparisonChart"></canvas>
+        </div>
+    </div>
+    
+    <div class="table-container">
+        <h3>详细计算结果</h3>
+        <table id="resultTable">
+            <thead>
+                <tr>
+                    <th>序号</th>
+                    <th>a 值</th>
+                    <th>a 百分比</th>
+                    <th>计算结果 f(a)</th>
+                    <th>计算结果百分比</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <!-- 表格内容将通过JavaScript动态生成 -->
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="result-info">
+        <p>计算结果显示，当 a 从 <span id="minA" class="highlight">0.1%</span> 增加到 <span id="maxA" class="highlight">100%</span> 时，计算结果 f(a) 从 <span id="minResult" class="highlight">0.0999%</span> 增加到 <span id="maxResult" class="highlight">50%</span>。</p>
+        <p>随着 a 值的增大，f(a) 逐渐趋近于 1，但永远不会等于 1。</p>
+    </div>
+    
+    <div class="footer">
+        <p>公式计算展示 © 2023 | 使用 Chart.js 绘制图表</p>
+    </div>
+
+    <script>
+        // 全局变量
+        let resultChart, comparisonChart;
+        let currentFormat = 'percent';
+        
+        // DOM 加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 绑定按钮事件
+            document.getElementById('calculateBtn').addEventListener('click', updateChartsAndTable);
+            
+            // 绑定格式选项事件
+            document.querySelectorAll('input[name="format"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    currentFormat = this.value;
+                    updateTable();
+                });
+            });
+            
+            // 初始化图表和表格
+            updateChartsAndTable();
+        });
+        
+        // 计算函数
+        function calculateFormula(a) {
+            return a / (1 + a);
+        }
+        
+        // 生成数据系列
+        function generateData() {
+            const start = parseFloat(document.getElementById('startValue').value);
+            const end = parseFloat(document.getElementById('endValue').value);
+            const step = parseFloat(document.getElementById('step').value);
+            
+            // 验证输入
+            if (start >= end) {
+                alert('起始值必须小于结束值！');
+                return [];
+            }
+            
+            if (step <= 0) {
+                alert('步长必须大于0！');
+                return [];
+            }
+            
+            const data = [];
+            for (let a = start; a <= end; a += step) {
+                // 处理浮点数精度问题
+                const roundedA = Math.round(a * 10000) / 10000;
+                const result = calculateFormula(roundedA);
+                data.push({
+                    a: roundedA,
+                    aPercent: roundedA * 100,
+                    result: result,
+                    resultPercent: result * 100
+                });
+            }
+            
+            return data;
+        }
+        
+        // 更新图表和表格
+        function updateChartsAndTable() {
+            const data = generateData();
+            if (data.length === 0) return;
+            
+            updateCharts(data);
+            updateTable(data);
+            updateResultInfo(data);
+        }
+        
+        // 更新图表
+        function updateCharts(data) {
+            const ctx1 = document.getElementById('resultChart').getContext('2d');
+            const ctx2 = document.getElementById('comparisonChart').getContext('2d');
+            
+            // 准备图表数据
+            const labels = data.map(item => `${(item.a * 100).toFixed(1)}%`);
+            const resultValues = data.map(item => item.result);
+            const aValues = data.map(item => item.a);
+            
+            // 销毁现有图表
+            if (resultChart) resultChart.destroy();
+            if (comparisonChart) comparisonChart.destroy();
+            
+            // 创建结果图表
+            resultChart = new Chart(ctx1, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '计算结果 f(a) = a/(1+a)',
+                        data: resultValues,
+                        borderColor: '#3498db',
+                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: '计算结果 f(a)'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'a 值 (百分比)'
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // 创建对比图表
+            comparisonChart = new Chart(ctx2, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'a 值',
+                            data: aValues,
+                            borderColor: '#e74c3c',
+                            borderWidth: 2,
+                            tension: 0.3
+                        },
+                        {
+                            label: '计算结果 f(a)',
+                            data: resultValues,
+                            borderColor: '#2ecc71',
+                            borderWidth: 2,
+                            tension: 0.3
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: '数值'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'a 值 (百分比)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // 更新表格
+        function updateTable(data = null) {
+            if (!data) {
+                data = generateData();
+            }
+            
+            const tableBody = document.getElementById('tableBody');
+            tableBody.innerHTML = '';
+            
+            if (data.length === 0) return;
+            
+            // 根据当前格式显示数据
+            data.forEach((item, index) => {
+                const row = document.createElement('tr');
+                
+                // 序号
+                const indexCell = document.createElement('td');
+                indexCell.textContent = index + 1;
+                row.appendChild(indexCell);
+                
+                // a 值
+                const aCell = document.createElement('td');
+                aCell.textContent = item.a.toFixed(4);
+                row.appendChild(aCell);
+                
+                // a 百分比
+                const aPercentCell = document.createElement('td');
+                aPercentCell.textContent = `${item.aPercent.toFixed(2)}%`;
+                row.appendChild(aPercentCell);
+                
+                // 计算结果
+                const resultCell = document.createElement('td');
+                if (currentFormat === 'percent') {
+                    resultCell.textContent = `${item.resultPercent.toFixed(4)}%`;
+                } else if (currentFormat === 'decimal') {
+                    resultCell.textContent = item.result.toFixed(6);
+                } else { // fraction
+                    // 尝试显示为分数（近似值）
+                    const fraction = simplifyFraction(item.result);
+                    resultCell.textContent = fraction;
+                }
+                row.appendChild(resultCell);
+                
+                // 计算结果百分比
+                const resultPercentCell = document.createElement('td');
+                resultPercentCell.textContent = `${item.resultPercent.toFixed(4)}%`;
+                row.appendChild(resultPercentCell);
+                
+                tableBody.appendChild(row);
+            });
+        }
+        
+        // 简化分数显示（近似值）
+        function simplifyFraction(value) {
+            // 将小数转换为近似分数
+            const tolerance = 1.0E-6;
+            let numerator = 1;
+            let denominator = 1;
+            let error = Math.abs(value - numerator / denominator);
+            
+            // 尝试找到最接近的分数
+            for (let d = 2; d <= 100; d++) {
+                const n = Math.round(value * d);
+                const newError = Math.abs(value - n / d);
+                
+                if (newError < error) {
+                    error = newError;
+                    numerator = n;
+                    denominator = d;
+                }
+                
+                if (error < tolerance) break;
+            }
+            
+            // 如果分母为1，直接返回分子
+            if (denominator === 1) return numerator.toString();
+            
+            return `${numerator}/${denominator}`;
+        }
+        
+        // 更新结果信息
+        function updateResultInfo(data) {
+            if (data.length === 0) return;
+            
+            const minA = data[0].a;
+            const maxA = data[data.length - 1].a;
+            const minResult = data[0].result;
+            const maxResult = data[data.length - 1].result;
+            
+            document.getElementById('minA').textContent = `${(minA * 100).toFixed(1)}%`;
+            document.getElementById('maxA').textContent = `${(maxA * 100).toFixed(1)}%`;
+            document.getElementById('minResult').textContent = `${(minResult * 100).toFixed(4)}%`;
+            document.getElementById('maxResult').textContent = `${(maxResult * 100).toFixed(2)}%`;
+        }
+    </script>
+</body>
+</html>
